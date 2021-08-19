@@ -1,0 +1,71 @@
+
+<!-- Contenedores para la tarjeta Tabla Cientes -->
+<div id="cliente" class="w3-container w3-padding-64 w3-light-grey">
+	<div class="w3-row-padding" >
+
+		<!-- Tarjeta de la tabla de Clientes -->
+		<div class="w3-container w3-rest w3-padding-16">
+			<div class="w3-card-4">
+				
+				<div class="w3-bar w3-padding w3-teal w3-large w3-center">
+  				<a id="nuevo" href="/clientes/new" style="width:10%" class="w3-bar-item w3-button w3-left w3-text-black w3-hover-text-light-grey" >
+							<i class="fas fa-user-plus"></i></a>
+					<a style="width:55%" class="w3-bar-item"><strong>CLIENTES</strong></a>  	
+					<form>
+						<input style="width:25%" type="text" name="busca"  class="w3-bar-item w3-input w3-round" placeholder="<%= @secCaracteres %>">							
+						
+						<button href="/clientes" type="submit" style="width:10%" class="w3-bar-item w3-button"><i class="fa fa-search"></i></a>
+					</form>
+				
+				</div>
+
+				<!-- Espacio para generar la tabla Clientes -->
+				<div id="tabla_cliente" class="w3-center" style="overflow:scroll; height:450px;">
+					<table class="w3-table-all w3-medium w3-hoverable">
+						<tr>
+							<th class="barrafija">ID</th>
+							<th class="barrafija">Nombre</th>
+							<th class="barrafija">Contacto</th>
+							<th class="barrafija">Tel:</th>
+							<th class="barrafija">Dirección:</th>
+							<th class="barrafija">Entidad</th>
+						</tr>
+						
+						<% @clientes.each do |cliente| %>
+						<tr>
+						<!--td>	<button onclick="cargaFormulario('<%=cliente.nombre%>','<%=cliente.contacto%>',
+									'<%=cliente.tel%>','<%=cliente.direccion%>',
+									'<%=cliente.entidad%>')"><%= cliente.id %> </td-->
+						<td>	<a href="/clientes/<%= cliente.id%>/edit"> <%= cliente.id %> </td>
+						<td>	<%= cliente.nombre %> </td>
+						<td>	<%= cliente.contacto %> </td>
+						<td>	<%= cliente.tel %> </td>
+						<td>	<%= cliente.direccion %> </td>
+						<td> 	<%= cliente.entidad %> </td>
+						</tr>
+						<% end %>
+						
+					</table>
+				</div>
+
+			</div>
+		</div> <!-- Termina tarjeta de la tabla de Clientes -->
+
+	</div>
+</div>	<!-- Fin del contenedor: Clientes -->
+<P id="prueba"> </p>
+
+<script>
+function cargaFormulario(nombre,contacto,tel,direccion,entidad){
+	//document.getElementById("prueba").innerHTML = "Registro= "+nombre;
+	
+	document.getElementById("nombre").value = nombre;
+	document.getElementById("contacto").value = contacto;
+	document.getElementById("tel").value = tel;
+	document.getElementById("direccion").value = direccion;
+	document.getElementById("entidad").value = entidad;
+	
+	if( dobleTarjeta == false )	// dobleTarjeta es una global para  señalizar una o dos tarjetas en despliegue
+		flecha("#formulario","flecha");
+}
+</script>

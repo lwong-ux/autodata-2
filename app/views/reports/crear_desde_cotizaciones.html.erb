@@ -1,0 +1,12 @@
+<div id="reports" class="w3-container w3-padding-64 w3-light-grey w3-center" >
+  <div class="w3-container w3-padding w3-card-4" > 
+    <h3> Ya existe una Reporte para esta Cotización! </h3>
+    <h4> Puedes modificarlo ó actualizarlo en REPORTES! </h4>
+
+    <br>
+     <label> <%= link_to "Ir a Reportes", edit_report_path(@report),  class: "w3-btn w3-light-blue w3-round" %> </label>
+      <label><%= link_to "Regresa",  quotations_path, class: "w3-btn w3-light-blue w3-round" %></label>
+    <!--a id="nuevo" href="/reports/<%=@report.id%>/edit"  class="w3-button w3-text-black w3-hover-text-light-grey" >
+                      <i class="fas fa-file-alt"></i> Ir a Reportes Diarios</a -->
+  </div>                    
+</div>                    

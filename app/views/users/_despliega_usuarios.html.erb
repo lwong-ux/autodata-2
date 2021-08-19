@@ -1,0 +1,315 @@
+<!--
+  _despliega_usuarios.html.erb
+
+    Es el código para desplegar las tarjetas de FORMULARIO y TABAL DE USUARIOS. 
+    Es común denominador para todos las acciones (ACTIONS) del controlador users.
+    "new" y "edit" requieren de formulario pero la tabla no tiene ligas. En la tarea edit 
+    también se despliega liga para borrar el regisro.
+    "index" y "show" no necesitan el formulario. show no requiere de la entrada de búsqueda.
+
+    Recibe como argumento:
+      formulario: 
+        true - Despliega el formulario. Se puede esconder el formulario.
+        false - No despliega formulario y la tabla de USUARIOS es igual al inicio.
+      alta: 
+        true - El formulario presenta tecla (submit) para una alta nueva.
+        false - El formulario presenta tecla (submit) para una modificación de registro existente.
+                También presenta liga para borrar el registro.
+      todos:
+        true - Despliega la tabla de USUARIOS completa.
+        false - Despliega solo el registro indicado.
+
+-->
+
+
+<!-- Contenedor para las tarjetas de Formulario y Tabla Usuarios -->
+<div id="user" class="w3-container w3-padding-64 w3-light-grey" >
+	<div class="w3-row-padding" >
+
+    <% if formulario %> <!-- Solo si requiere formulario -->
+
+      <!-- 
+          Tarjeta del Formulario 
+      -->
+      <div id="formulario" class="w3-container w3-third w3-padding-16" >
+        <div class="w3-card-4" > 
+          <div class="w3-container w3-teal w3-center" >
+            <h4>Formulario</h4>		
+          </div>
+
+          <%= form_with model: @user do |form| %>
+            
+            <div class="w3-container w3-padding">
+              <%= form.label :nombre %><br>
+              <%= form.text_field :nombre, class: "w3-input", placeholder: "obligatorio" %>
+              <% @user.errors.full_messages_for(:nombre).each do |message| %>
+                <div><%= message %></div>
+              <% end %>
+            </div>
+
+            <div class="w3-container w3-padding">
+              <%= form.label :apellido, "Primer Apellido" %><br>
+              <%= form.text_field :p_apellido, class: "w3-input", placeholder: "obligatorio" %>
+              <% @user.errors.full_messages_for(:p_apellido).each do |message| %>
+                <div><%= message %></div>
+              <% end %>
+            </div>
+
+            <div class="w3-container w3-padding">
+              <%= form.label :apellido, "Segundo Apellido" %><br>
+              <%= form.text_field :s_apellido, class: "w3-input", placeholder: "obligatorio" %>
+              <% @user.errors.full_messages_for(:s_apellido).each do |message| %>
+                <div><%= message %></div>
+              <% end %>
+            </div>
+
+            <div class="w3-cell-row"> <!--  Grupo de Tel y Email -->
+              <div class="w3-container w3-cell w3-padding" style="width:40%">
+                <%= form.label :tel %><br>
+                <%= form.text_field :tel, class: "w3-input" %>
+                <% @user.errors.full_messages_for(:tel).each do |message| %>
+                  <div><%= message %></div>
+                <% end %>
+              </div>
+              <div class="w3-container w3-cell w3-padding">
+                <%= form.label :email %><br>
+                <%= form.text_field :email, class: "w3-input" %>
+                <% @user.errors.full_messages_for(:email).each do |message| %>
+                  <div><%= message %></div>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="w3-cell-row"> <!--  Grupo de Usuario y Clave -->
+              <div class="w3-container w3-cell">
+                <%= form.label :usuario %><br>
+                <%= form.text_field :usuario, class: "w3-input", onChange: 'revisaSeleccion()' %>
+                <% @user.errors.full_messages_for(:usuario).each do |message| %>
+                  <div><%= message %></div>
+                <% end %>
+              </div>
+              <div class="w3-container w3-cell " style="width:40%">
+                <%= form.label :clave %><br>
+                <%= form.text_field :clave, class: "w3-input" %>
+                <% @user.errors.full_messages_for(:clave).each do |message| %>
+                  <div><%= message %></div>
+                <% end %>
+              </div>
+            </div>
+            <br>
+            <!-- Opciones para seleccionar los permisos y cliente si es el caso -->
+            <div class="w3-cell-row w3-input w3-border w3-round w3-padding-16">
+              <div class="w3-container w3-cell " style="width:50%">
+                <%= form.label :permisos, "Permiso para: " %><br>
+                <%= form.select :permiso, [["Operador",2], ["Supervisor",3], ["Administración",4],
+                    ["Sistemas",5], ["Dirección",6], ["Cliente",1]], {},
+                    onchange: 'revisaSeleccion()', id: "permisos",  class: "w3-select"
+                %>
+              </div>
+            
+              <div id="cliente" class="w3-container w3-cell" style="display:block">
+                <%= form.label :cliente_id, "Representa a: " %><br>
+                <%= form.collection_select :cliente_id,  Cliente.order(:nombre), :id, :nombre, {}, 
+                    class: "w3-select" %>
+              </div>
+            
+            </div>
+            <br>
+
+            <!-- Esta sección resuelve el tipo de tecla según sea alta o modifica -->
+            <div class="w3-container w3-padding-16 w3-center">
+            
+              <% if alta %>
+
+                <%= form.submit name="Dar de Alta", class: "w3-button w3-large w3-gray w3-hover-teal" %>
+              
+              <% else %>
+
+                <div class="w3-cell-row w3-large">
+                  <div class=" w3-cell w3-cell-middle w3-center">
+                    <%= form.submit name="Modificar", 
+                        data: { confirm: "Deseas MODIFICAR el usuario: "+@user.nombre+" ?" },
+                        class: "w3-button  w3-gray w3-hover-teal" %>
+                  </div>
+                  <div class=" w3-cell w3-cell w3-cell-middle w3-medium w3-center">
+                    <%= link_to "Borrar", user_path(@user), method: :delete,
+                        data: { confirm: "Deseas BORRAR el usuario: "+@user.nombre+" ?" },
+                        class: "w3-button w3-gray w3-hover-red" %>
+                  </div>
+                </div>
+                
+              <% end %>
+
+            </div>
+            
+            
+          <% end %> <!-- fin de la forma -->
+
+        </div> <!-- Termina la tarjeta del formulario -->
+      </div> <!-- Termina el contenedor de tarjeta de Formulario -->
+
+    <% end %>  <!-- fin del if de formulario -->
+
+		<!-- 
+         Tarjeta de la tabla de Usuarios 
+    -->
+		<div class="w3-container w3-rest w3-padding-16">
+			<div class="w3-card-4">
+				
+				<!-- En modo formulario no se despliega la entrada de búsqueda -->
+        <div class="w3-cell-row w3-padding w3-teal w3-xlarge">
+
+  				<% if formulario || todos == false %>
+
+            <div class="w3-container w3-cell w3-cell-middle w3-large">
+              <a id="flecha"  title="Expande ó contrae la tabla" class="w3-button w3-hide-small w3-text-black w3-hover-text-light-grey" 
+                  onclick="flecha('#formulario',this.id)">&#10094;&#10094;</a>
+            </div>
+            <div class="w3-container w3-cell w3-cell-middle w3-center">
+              <a><strong>USUARIOS</strong></a>  	
+            </div>
+            <div class="w3-container w3-cell w3-cell-middle w3-center w3-large">
+              <a href="/users" type="submit"  title="Regresa a USUARIOS" class=" w3-button w3-text-black w3-hover-text-light-grey"><i class="fa fa-reply-all"></i></a>
+            </div>
+
+          <% else  %>
+
+            <div class="w3-container w3-cell w3-cell-middle">
+              <a id="nuevo" href="/users/new"  title="Dar de alta" class="w3-button w3-text-black w3-hover-text-light-grey " >
+                  <i class="fas fa-user"></i> +</a>
+            </div>
+            <div class="w3-container w3-cell w3-cell-middle w3-center">
+              <a><strong>USUARIOS</strong></a>  	
+            </div>
+            <div class="w3-container w3-cell w3-cell-middle w3-center" >
+              <form >
+                <input  type="text" name="busca" size="5" class="w3-cell w3-cell-middle w3-medium" placeholder="<%= @secCaracteres %>">							
+                
+                <button href="/users" type="submit"  class=" w3-cell w3-cell-middle w3-button w3-medium"><i class="fa fa-search"></i></a>
+              </form>
+            </div>
+          
+          <% end %>
+				
+        </div>
+
+				<!-- Espacio para generar la tabla Usuarios -->
+				<div id="tabla_user" class="w3-center" style="overflow:scroll; height:450px;">
+					
+          <% if todos %> <!-- La tabla despliega todos los registros -->
+            
+            <table class="w3-table-all w3-medium w3-hoverable">
+              <tr>
+                <th class="barrafija">ID</th>
+                <th class="barrafija">Nombre</th>
+                <th class="barrafija">P_Apellido</th>
+                <th class="barrafija">S_Apellido</th>
+                <th class="barrafija">Tel</th>
+                <th class="barrafija">Email</th>
+                <th class="barrafija">Usuario</th>
+                <th class="barrafija">Clave</th>
+                <th class="barrafija">Permiso</th>
+                <th class="barrafija">Cliente</th>
+              </tr>
+              <% @users.each do |user| %>
+                <tr>
+
+                  <% if formulario %> <!-- En modo formulario los elementos de la tabla no tienen liga -->
+                    <td>	<%= user.id %> </td>
+                  <% else %>
+                    <!-- td>	<a href="/users/<%= user.id%>/edit"> <%= user.id %> </td -->
+                    <td title="Modifica datos de este usuario"> <%= link_to user.id, edit_user_path(user), class: "w3-btn w3-light-blue w3-round" %> </td>
+                  <% end %>
+                  <td>	<%= user.nombre %> </td>
+                  <td>	<%= user.p_apellido %> </td>
+                  <td>	<%= user.s_apellido %> </td>
+                  <td>	<%= user.tel %> </td>
+                  <td> 	<%= user.email %> </td>
+                  <td>	<%= user.usuario %> </td>
+                  <td> 	<%= user.clave %> </td>
+                  <td>	<%= user.permiso %> </td>
+                  <!-- Solo se despliega el nombre del cliente si el permiso es de "cliente" -->
+                  <% if user.permiso > 1 %>
+                    <!-- % user.cliente_id = 1 % -->
+                    <td> 	</td>
+                  <% else %>
+                    <!--td> 	<%= Cliente.find_by(id: user.cliente_id).nombre %> </td-->
+                    <td> 	<%= user.cliente.nombre %> </td>
+                  <% end %>
+                </tr>
+              <% end %>
+            </table>
+            
+          <% else %> <!-- La tabla despliega solo un registro, ya sea por show,  alta o modificación -->
+            
+            <table class="w3-table-all w3-medium w3-hoverable">
+              <tr>
+                <th class="barrafija">ID</th>
+                <th class="barrafija">Nombre</th>
+                <th class="barrafija">P_Apellido</th>
+                <th class="barrafija">S_Apellido</th>
+                <th class="barrafija">Tel</th>
+                <th class="barrafija">Email</th>
+                <th class="barrafija">Usuario</th>
+                <th class="barrafija">Clave</th>
+                <th class="barrafija">Permiso</th>
+                <th class="barrafija">Cliente</th>
+              </tr>
+              <tr>
+                <% if formulario %>
+                  <td>	<%= @user.id %> </td>
+                <% else %>
+                  <td>	<a href="/users/<%= @user.id %>/edit"> <%= @user.id %> </td>
+                <% end %>
+                  <td>	<%= @user.nombre %> </td>
+                  <td>	<%= @user.p_apellido %> </td>
+                  <td>	<%= @user.s_apellido %> </td>
+                  <td>	<%= @user.tel %> </td>
+                  <td> 	<%= @user.email %> </td>
+                  <td>	<%= @user.usuario %> </td>
+                  <td> 	<%= @user.clave %> </td>
+                  <td>	<%= @user.permiso %> </td>
+                  <!-- Solo se despliega el nombre del cliente si el permiso es de "cliente" -->
+                  <% if @user.permiso > 1 %> 
+                     <!-- % @user.cliente_id = 1 % -->
+                    <td> </td>
+                  <% else %>
+                    <td> 	<%= @user.cliente.nombre %> </td>
+                  <% end %>
+              </tr>
+            </table>
+
+					<% end %>
+					
+				</div>
+        <% if todos %>
+         <div class="w3-container w3-large w3-center apple_pagination">
+            <%= will_paginate %>
+          </div>
+        <% end %>
+			</div>
+		</div> <!-- Termina tarjeta de la tabla de Clientes -->
+	</div>
+</div>	<!-- Fin del contenedor: Clientes -->
+
+
+<script>
+  var i = 0; // Solo para pruebas
+  /*    revisaSeleccion()
+    Esta función de llama cuando hay un cambio en la selección de los permisos. Visibiliza o no
+    la selección de los clientes dependiendo de si es necesario su elección
+  */
+  function revisaSeleccion(){
+
+    var p = document.getElementById("permisos").value;  
+    document.getElementById("prueba").innerHTML = "JavaScript funcionando.."+ p; // Solo para pruebas
+    if( p == 1 )
+      document.getElementById("cliente").style.display = "block";
+    else
+      document.getElementById("cliente").style.display = "none";
+    
+     ++i;
+  }
+
+ revisaSeleccion();  // Para que refresque el bloque de "cliente" la primera vez
+</script>

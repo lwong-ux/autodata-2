@@ -1,0 +1,58 @@
+<div class="w3-container w3-padding">
+  <% if @formato_html %>
+    <div style="position:absolute; top:80px">
+      <label><%= link_to "Descarga", envia_cotiza_path(@cotiza, format: :pdf), class: "w3-btn w3-light-blue w3-round" %> </label>
+      <label><%= link_to "Regresa",  quotations_path, class: "w3-btn w3-light-blue w3-round" %></label>
+    </div>
+  <% end %>
+  <br><br>
+  <h1 class="w3-center">Cotización No. <%= @cotiza.id %></h1>
+  <br>
+  <div class="w3-cell-row">
+    <div class="w3-container w3-cell w3-right">
+      <h2><%= @cotiza.cliente.nombre %></h2>
+      <h5><%= @cotiza.cliente.direccion %><h5>
+      <h5><%= @cotiza.cliente.tel %><h5>
+      <h5><%= @cotiza.cliente.entidad %><h5>
+    </div>
+  </div>
+  <div>
+    <h5>Atención: <strong><%= @cotiza.cliente.contacto %></strong><h5>
+    <h5>P R E S E N T E <h5>
+    <br>
+    <h5>Planta: <%= @cotiza.request.part.plant.nombre %></h5>
+    <h5>No. Parte: <%= @cotiza.request.part.num_parte %></h5>
+    <h5>Nombre: <%= @cotiza.request.part.nombre %></h5>
+  </div>
+<br>
+<div>
+  <table class="w3-table-all">
+    <tr>
+      <th >Fecha </th>
+      <th >Modo de Cobro</th>
+      <th >Inventario</th>
+      <th >Precio</th>
+      <th >Sub Total</th>
+      <th >IVA</th>
+      <th >Total</th>
+    </tr>
+    <tr>
+      <td>	<%= @cotiza.fecha_cotizada %> </td>
+      <td>	<%= @cotiza.modo_cobro %> </td>
+      <td>	<%= @cotiza.inventario %> </td>
+      <td> 	<%= @cotiza.precio %> </td>
+      <td> 	<%= @cotiza.sub_total %> </td>
+      <td> 	<%= @cotiza.iva %> </td>
+      <td> 	<%= @cotiza.total %> </td>
+      </td>
+    </tr>
+  </table>
+</div>
+<br>
+<h2 class="w3-right">TOTAL: $<%= @cotiza.total %></h2>
+</div>
+<br>
+<h5> Condiciones comerciales:</h5>
+ <p> a)- La vigencia de los precios es de 30 días a partir de emitida esta cotización.
+  b)- Los precios son en pesos mexicanos (MN).
+</p>

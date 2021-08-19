@@ -1,0 +1,171 @@
+
+
+<div class="w3-container w3-padding-64">
+  <% if @formato_html %>
+      <label><%= link_to "Descarga", envia_reporte_path(@report, format: :pdf), class: "w3-btn w3-light-blue w3-round" %> </label>
+      <label><%= link_to "Regresa",  reports_path, class: "w3-btn w3-light-blue w3-round" %></label>
+    </div>
+  <% end %>
+  <!-- 
+        Tarjeta de la tabla general de REPORTES 
+  -->
+  <div class="w3-container w3-rest w3-padding-16">
+    <div class="w3-card-4">
+      
+      <!-- 
+          Encabezado de la tabla general 
+      -->
+      <div class="w3-cell-row w3-padding w3-blue w3-xlarge">
+        <!-- Título -->
+        <div class="w3-container w3-cell w3-cell-middle w3-center" style="width:80%">
+          <label><strong>REPORTE DIARIO No: <%= @report.id %></strong></label>  	
+        </div>
+      </div>
+
+      <!-- 	
+        Código HTML para el primer contenedor: ícono (1/4) y tarjeta de generales (3/4)
+      -->
+      <div class="w3-container">
+        <div class="w3-cell-row w3-padding-32">
+          <!-- Espacio del ícono del Reporte -->
+          <div class="w3-cell w3-container w3-center w3-cell-middle" style="width:20%">
+            <!--i class="fas fa-file-alt qb-colorText w3-padding-16" style="font-size:120px"></i><br-->
+            <button id="numReporte" class="w3-xxlarge"> <%= @report.id %></button>
+          </div>
+          <!-- Espacio de las tres barras de generales -->
+          <div class="w3-cell w3-container  w3-light-gray 
+                  w3-padding w3-medium w3-round" style="width:80%">
+            <table class="w3-center w3-red  w3-border" style="width:100%;padding:5px">
+              <tr> 
+                <th>OPERADOR</th> 
+                <th>FECHA INICIO</th> 
+              </tr>
+              <tr> 
+                <td ><%= @report.user.nombre %>
+                <%= @report.user.p_apellido %></td> 
+                <td ><%= @report.fecha_inicio.to_formatted_s(:db) %></td> 
+              </tr>
+            </table><br>
+            <div  class="w3-responsive">
+              <table class="w3-center w3-blue w3-border" style="width:100%;padding:5px">
+                <tr> 
+                  <th>CLIENTE</th> 
+                  <th>PLANTA</th> 
+                  <th>PARTE</th> 
+                  <th>NOMBRE</th> 
+                </tr>
+                <tr> 
+                  <td>	<%= @report.quotation.cliente.nombre %> </td> 
+                  <td>	<%= @report.quotation.request.part.plant.nombre %> </td> 
+                  <td>	<%= @report.quotation.request.part.num_parte %> </td>
+                  <td>	<%= @report.quotation.request.part.nombre %> </td>  
+                </tr>
+              </table>
+            </div><br>
+            <div class="w3-responsive">
+              <table class="w3-center w3-red w3-border" style="width:100%;padding:5px">
+                <tr>
+                  <th >ITEMS</th>
+                  <th >INSPECS</th>
+                  <th >OK</th>
+                  <th >NG</th>
+                  <th >RECUP</th>
+                  <th >SCRAP</th>
+                  <th >INCIDE</th>
+                </tr>
+                <tr>
+                  <td  id="idItem"><%= @report.inspections.length %> </td>
+                  <td ><%= @report.total_inspeccion %></td>
+                  <td ><%= @report.total_ok %></td>
+                  <td ><%= @report.total_ng %></td>
+                  <td ><%= @report.total_recupera %></td>
+                  <td ><%= @report.total_basura %></td>
+                  <td ><%= @report.total_incidentes %></td>
+                </tr>
+              </table>
+            </div> <!-- fin de responsive -->
+          </div>
+        </div>
+      </div>
+      
+      <!--
+          Código HTML para el segundo contenedor: tabla de lotes de inspección 
+      -->
+      <div class="w3-container">
+        <table class="w3-table-all w3-small w3-hoverable">
+          <tr class="w3-small">
+            <th class="w3-center barrafija">ITEM</th>
+            <th class="w3-center barrafija">LOTE</th>
+            <th class="w3-center barrafija">LOTE PROD1</th>
+            <th class="w3-center barrafija">LOTE PROD2</th>
+            <th class="w3-center barrafija">INSPECS</th>
+            <th class="w3-center barrafija">OK</th>
+            <th class="w3-center barrafija">NG</th>
+            <th class="w3-center barrafija">RECUP</th>
+            <th class="w3-center barrafija">SCRAP</th>
+            <th class="w3-center barrafija">INCIDE</th>
+          </tr>
+          <% @report.inspections.each do |inspection| %>
+            <tr>
+              <td class="w3-center w3-light-blue w3-round"><%= inspection.num_item %></td>
+              
+              <td class="w3-center"><%= inspection.lote %></td>
+              <td class="w3-center"><%= inspection.lote_prod1 %></td>
+              <td class="w3-center"><%= inspection.lote_prod2 %></td>
+              <td class="w3-center"><%= inspection.inspecciones %></td>
+              <td class="w3-center"><%= inspection.ok %></td>
+              <td class="w3-center"><%= inspection.ng %></td>
+              <td class="w3-center"><%= inspection.recuperadas %></td>
+              <td class="w3-center"><%= inspection.scrap %></td>
+              <td class="w3-center w3-btn w3-yellow w3-round"><%= inspection.incidentes %></td>
+            </tr>
+          <% end %>
+        </table>
+      </div>
+
+      <!--
+          Tabla de incidentes desglozados
+      -->
+      <div class="w3-container w3-padding-64" style="page-break-before: always;">
+        <div class="w3-container w3-padding w3-blue w3-center" >
+            <h4>TABLA GENERAL DE INCIDENTES</h4>		
+        </div>
+        <div class="w3-responsive" >
+          <div>
+            <table class="w3-table-all w3-small w3-hoverable" >
+              <tr class="w3-small">
+                <th class="w3-center barrafija" style="padding:5px">ITEM</th>
+              <% @tipos.each do |tipo| %> 
+                <% if @tipos.length > 9 %>
+                  <th class="w3-center barrafija" style="padding:5px"><%= tipo [0,7]%></th>
+                <% else %>
+                <th class="w3-center barrafija" style="padding:5px"><%= tipo%></th>
+                <% end %>
+              <% end %>
+              </tr>
+              <% i = 0 %>
+              <% @tabla_final.each do |row| %>
+                <tr>
+                  <td class="w3-center w3-light-blue w3-round" style="padding:5px"><%= @items[i] %></td>
+                <% row.each do |column| %>
+                  <td class="w3-center" style="padding:5px"><%= column %></td>
+                <% end %>
+                </tr>
+                <% i += 1 %>
+              <% end %>
+              <tr>
+                <td class="w3-center"><strong>TOTAL</strong></td>
+              <% @total_tipo.each do |total| %>
+                <td class="w3-center" style="padding:5px"><strong><%= total %></strong></td>
+              <% end %>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div> <!-- Fin de la Tabla de incidentes -->
+
+    </div> <!-- fin de la tarjeta card-4 -->
+   
+
+  </div>
+<div>

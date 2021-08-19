@@ -1,0 +1,563 @@
+<!-- Contenedor para las tarjetas de Formulario y Tabla Reportes -->
+<div id="report" class="w3-container w3-padding-64 w3-light-grey" >
+	<div class="w3-row-padding" >
+
+    <!-- 
+          Tarjeta del FORMULARIO 
+    -->
+    <div id="formulario" class="w3-container w3-third w3-padding-16" >
+      <div class="w3-card-4"> 
+        <div class="w3-container w3-blue w3-center" >
+          <h4>ALTA DE LOTES DE INSPECCIÓN</h4>		
+        </div>
+        <!--  DATOS FIJOS -->
+        <div class="w3-container w3-card">
+          <h4 class="w3-center">ITEM: <%= @num_item %> </h4>
+        </div>
+        
+       
+        <%= form_with model: @inspection do |form| %>
+          
+          <!-- Campos ya conocidos: report_id y item_num -->
+          <input type="hidden" id="report_id" name="inspection[report_id]" 
+            value="<%= @report.id %>%" />
+          <input type="hidden" id="num_item" name="inspection[num_item]" 
+            value="<%= @num_item %>" />
+
+          <!-- 
+              Contenedor para la captura del lote de inspección 
+          -->
+          <div class="w3-padding">
+            <div class="w3-cell-row"><br>
+              
+              <!-- 
+                  Entradas de los números de lotes de inspección 
+              -->
+              <div class="w3-cell w3-cell-middle w3-medium" style="width:45%">
+                <%= form.label :lote, "LOTE" %><br>
+                <%= form.text_field :lote, class: "w3-input w3-border", placeholder: "Se requiere!"  %>
+                <% @inspection.errors.full_messages_for(:lote).each do |message| %>
+                  <div><%= message %></div>
+                <% end %>
+                <br>
+                <%= form.label :lote_prod1, "LOTE PROD1" %><br>
+                <%= form.text_field :lote_prod1, class: "w3-input w3-border"%>
+                <% @inspection.errors.full_messages_for(:lote_prod1).each do |message| %>
+                  <div><%= message %></div>
+                <% end %>
+                <br>
+                <%= form.label :lote_prod2, "LOTE PROD2" %><br>
+                <%= form.text_field :lote_prod2, class: "w3-input w3-border"%>
+                <% @inspection.errors.full_messages_for(:lote_prod2).each do |message| %>
+                  <div><%= message %></div>
+                <% end %>
+              </div>
+              <div class="w3-cell" style="width:2%">
+              <!-- solo para crear un espacio entre dos celdas -->
+              </div>
+              <!-- 
+                  Tarjeta de los contadores principales: OK, NG, RECUP y SCRAP 
+              -->
+              <div class="w3-cell">
+                <div class="w3-card-4 w3-center w3-light-gray 
+                                w3-round  w3-padding-small">	
+                  <div class="w3-cell-row">
+                    <div class="w3-cell w3-cell-middle">
+                    <input class="w3-radio" style="width:20px;height:20px" type="radio" name="multi" value=1 checked>
+                    <label>+1</label>
+                    </div>
+                    <div class="w3-cell w3-cell-middle">
+                    <input class="w3-radio" style="width:20px;height:20px" type="radio" name="multi" value=10>
+                    <label>+10</label>
+                    </div>
+                    <div class="w3-cell w3-cell-middle">
+                    <input class="w3-radio" style="width:20px;height:20px" type="radio" name="multi" value=100>
+                    <label>+100</label>
+                    </div>
+                  </div>
+                  <br>
+                  <!-- Campo de la palomita y del contador OK-->
+                  <div class="w3-cell-row">
+                    <!-- Palomita -->
+                    <div title="Doble click para contar" class="w3-cell w3-cell-middle" 
+                          style="width:30%"     ondblclick="incOk()">
+                      <div for="ok" style="font-size:40px; color:green;">&#10003</div>
+                    </div>
+                    <!-- Contador OK -->
+                    <div class="w3-cell w3-cell-middle">
+                      <input  id="ok" class="w3-input w3-green w3-xlarge w3-border w3-center w3-padding-small"
+                          type="number" value="<%= @inspection.ok %>" min="0" max="100000" name="inspection[ok]" ondblclick="incOk()">
+                    </div>
+                  </div>
+                  <!-- Campo del tache y del contador NG -->
+                  <div class="w3-cell-row">
+                    <!-- Tache -->
+                    <div title="Doble click para contar" class="w3-cell w3-cell-middle" style="width:30%" ondblclick="incNg()">
+                      <div for="ng" style="font-size:40px; color:red">&#10007</div>
+                    </div>
+                    <!-- Contador NG -->
+                    <div class="w3-cell w3-cell-middle">
+                      <input  id="ng" class="w3-input w3-red w3-xlarge w3-border w3-center w3-padding-small" 
+                          type="number" value="<%= @inspection.ng %>" min="0" max="100000" name="inspection[ng]" onchange="calcScrap()" ondblclick="incNg()">
+                    </div>
+                  </div>
+                  <!-- Campo de la etiqueta y contador RECUPERA -->
+                  <div class="w3-cell-row">
+                    <!-- Etiqueta RECUPERA -->
+                    <div title="Doble click para contar" class="w3-cell w3-cell-middle" style="width:40%"  ondblclick="incRecup()">
+                      <div for="recup"><b>RECUPERA </b></div>
+                    </div>
+                    <!-- Contador RECUPERA -->
+                    <div class="w3-cell w3-cell-middle">
+                      <input 	id="recup" class="w3-input w3-light-green w3-xlarge w3-border w3-center w3-padding-small" 
+                          type="number"  value="<%= @inspection.recuperadas %>" min="0" max="10000" name="inspection[recuperadas]" onchange="calcScrap()" ondblclick="incRecup()">
+                    </div>
+                  </div>
+                  <!-- Campo de la etiqueta y contador SCRAP -->
+                  <div class="w3-cell-row">
+                    <!-- Etiqueta SCRAP -->
+                    <div class="w3-cell w3-cell-middle" style="width:40%">
+                      <div for="scrap" style="font-size:35px; color:gray">&#9851</div>
+                    </div>
+                    <!-- Contador SCRAP -->
+                    <div class="w3-cell w3-cell-middle">
+                      <input id="scrap" class="w3-input w3-large w3-border w3-center w3-padding-small" type="texto"  value="<%= @inspection.scrap %>" name="inspection[scrap]">
+                    </div>
+                  </div>
+
+                </div> <!-- Termina la tarjeta de los contadores principales -->
+              </div> <!-- Terina cell -->
+            </div> <!-- Termina cell-row -->
+          </div>
+          
+          <!-- Selector de la categoría de incidentes -->
+					<div class="w3-cell-row w3-padding">
+						<div class="w3-cell" >
+							<!--label>REGISTRO DE INCIDENTES: &#10071</label><br-->
+							<label>INCIDENTE:</label>
+						</div>
+						<div class="w3-cell" >
+              <select id='tipoObserva' class='w3-select w3-medium w3-yellow' 
+							<% IncidentType.all.each do |incident| %>
+                style='width:100%'  name='tipoObserva'>";
+	              <option value='<%= incident.id %>'> <%= incident.tipo %></option>
+              <% end %>
+              </select>
+						</div>
+					</div>
+          <!-- 
+              Contenededor para los cuadros de Incidentes: 
+              doble click asigna el incidente seleccionado a un color 
+          -->
+					<div class="w3-cell-row w3-padding-small">
+						<div class="w3-cell">
+              
+              <input title="Doble click para asignar incidente" id="amarillo" name="amarillo" value="<%= @tipoIncidente[0] %>" class="w3-button w3-medium w3-yellow w3-padding-small"   style="width:70%;"
+                  ondblclick="asignaIncidentes('amarillo', 'eAmarillo')">
+              <input 	title="Doble click para contar" id="eAmarillo" name="eAmarillo" value="<%= @cantidadIncidente[0] %>" class="w3-medium w3-center w3-border" style="width:22%; vertical-align:middle" 
+                  ondblclick="this.value=parseInt(this.value) + 1">
+              
+							<input title="Doble click para asignar incidente" id="amber" name="amber" value="<%= @tipoIncidente[1] %>" class="w3-button w3-medium w3-amber w3-padding-small" style="width:70%" 
+									ondblclick="asignaIncidentes('amber','eAmber')">
+							<input 	title="Doble click para contar" id="eAmber" name="eAmber"  value="<%= @cantidadIncidente[1] %>" class="w3-medium w3-center w3-border" style="width:22%; vertical-align:middle" 
+									ondblclick="this.value=parseInt(this.value) + 1">
+
+							<input title="Doble click para asignar incidente" id="orange" name="orange" value="<%= @tipoIncidente[2] %>" class="w3-button w3-medium w3-orange w3-padding-small" style="width:70%"
+									ondblclick="asignaIncidentes('orange','eOrange')">
+							<input 	title="Doble click para contar" id="eOrange" name="eOrange"  value="<%= @cantidadIncidente[2] %>" class="w3-medium w3-center w3-border" style="width:22%; vertical-align:middle"
+									ondblclick="this.value=parseInt(this.value) + 1">
+
+							<input title="Doble click para asignar incidente" id="lime" name="lime" value="<%= @tipoIncidente[3] %>" class="w3-button w3-medium w3-lime w3-padding-small" style="width:70%"
+									ondblclick="asignaIncidentes('lime','eLime')">
+							<input 	title="Doble click para contar" id="eLime" name="eLime"  value="<%= @cantidadIncidente[3] %>" class="w3-medium w3-center w3-border" style="width:22%; vertical-align:middle"
+									ondblclick="this.value=parseInt(this.value) + 1">
+						</div>
+						<div class="w3-cell">
+							<input title="Doble click para asignar incidente" id="aqua" name="aqua" value="<%= @tipoIncidente[4] %>" class="w3-button w3-medium w3-aqua w3-padding-small" style="width:72%"
+									ondblclick="asignaIncidentes('aqua','eAqua')">
+							<input 	title="Doble click para contar" id="eAqua" name="eAqua"  value="<%= @cantidadIncidente[4] %>" class="w3-medium w3-center w3-border" style="width:22%; vertical-align:middle"
+									ondblclick="this.value=parseInt(this.value) + 1">
+
+							<input title="Doble click para asignar incidente" id="blue" name="blue" value="<%= @tipoIncidente[5] %>" class="w3-button w3-medium w3-light-blue w3-padding-small" style="width:72%"
+									ondblclick="asignaIncidentes('blue','eBlue')">
+							<input 	title="Doble click para contar" id="eBlue" name="eBlue"  value="<%= @cantidadIncidente[5] %>" class="w3-medium w3-center w3-border" style="width:22%; vertical-align:middle"
+									ondblclick="this.value=parseInt(this.value) + 1">
+
+							<input title="Doble click para asignar incidente" id="cyan" name="cyan" value="<%= @tipoIncidente[6] %>" class="w3-button w3-medium w3-cyan w3-padding-small" style="width:72%"
+									ondblclick="asignaIncidentes('cyan','eCyan')">
+							<input 	title="Doble click para contar" id="eCyan" name="eCyan"  value="<%= @cantidadIncidente[6] %>" class="w3-medium w3-center w3-border" style="width:22%; vertical-align:middle"
+									ondblclick="this.value=parseInt(this.value) + 1">
+
+							<input title="Doble click para asignar incidente" id="teal" name="teal" value="<%= @tipoIncidente[7] %>" class="w3-button w3-medium w3-teal w3-padding-small" style="width:72%"
+									ondblclick="asignaIncidentes('teal','eTeal')">
+							<input 	title="Doble click para contar" id="eTeal" name="eTeal"  value="<%= @cantidadIncidente[7] %>" class="w3-medium w3-center w3-border" style="width:22%; vertical-align:middle"
+									ondblclick="this.value=parseInt(this.value) + 1">
+						</div>
+					</div>
+          <!-- 
+              Esta sección resuelve el tipo de tecla "SUBMIT" según sea alta o modifi
+          -->
+          <div class="w3-container w3-padding-16 w3-center">
+          
+            <% if alta %> <!-- Caso Alta o Termina -->
+
+              <div class="w3-container w3-padding-32 w3-cell-row ">
+                <div class="w3-cell">
+                  <label for="cajita_termina">Termina</label>
+                  <input class="w3-check" title="Cambia el botón de Dar Alta por Termina" type="checkbox" id="cajita_termina"  value="checked" oninput="cambiaTermina()">
+                </div>
+                <div id="daralta" class="w3-cell">
+                  <%= form.submit name="Dar de Alta", data: { confirm: "Deseas DAR DE ALTA el ITEM: "+@num_item.to_s+" ?" }, class: "w3-button w3-large w3-gray w3-hover-blue" %>
+                </div>
+                <!-- Si cajita_termina, se habilita botón para ACTION TERMINA -->
+                <div id="termina" class="w3-cell" style="display:none">
+                  <%= link_to "Termina Reporte", termina_reporte_path(@report), 
+                        data: { confirm: "Deseas TERMINAR el reporte: "+@report.id.to_s+" ?" },
+                        class: "w3-button w3-large w3-gray w3-hover-green" %>
+                </div>
+              </div>
+
+            <% else %> <!-- Caso Actualizar -->
+
+              <div class="w3-cell-row w3-padding-32 w3-large">
+                <div class=" w3-cell w3-cell-middle w3-center">
+                  <%= form.submit name="Actualizar", 
+                      data: { confirm: "Deseas ACTUALIZAR el ITEM: "+@inspection.num_item.to_s+" ?" },
+                      class: "w3-button  w3-gray w3-hover-blue" %>
+                </div>
+                <div class=" w3-cell w3-cell w3-cell-middle w3-medium w3-center">
+                  <%= link_to "Limpiar", inspection_path(@inspection), method: :delete,
+                      
+                      class: "w3-button w3-gray w3-hover-red" %>
+                </div -->
+              </div>
+              
+            <% end %> <!-- Fin de la sección ALTA, MODIFICA y BORRA -->
+
+          </div>
+          
+        <% end %> <!-- fin de la forma -->
+
+      </div> <!-- Termina la tarjeta del formulario -->
+    </div> <!-- Termina el contenedor de tarjeta de Formulario -->
+
+    <!-- 
+         Tarjeta de la tabla general de REPORTES 
+    -->
+		<div class="w3-container w3-rest w3-padding-16">
+			<div class="w3-card-4">
+				
+				<!-- 
+            Encabezado de la tabla general 
+        -->
+        <div class="w3-cell-row w3-padding w3-blue w3-xlarge">
+          <!-- Título -->
+          <div class="w3-container w3-cell w3-cell-middle w3-center" style="width:80%">
+            <a><strong>INSPECCIÓN</strong></a>  	
+          </div>
+          <!-- Ícono de retorno al inicio -->
+          <div class="w3-container w3-cell w3-cell-middle w3-center w3-large">
+            <a href="/inspections"   title="Regresa a REPORTES" class=" w3-button w3-text-black w3-hover-text-light-grey"><i class="fa fa-reply-all"></i></a>
+          </div>
+        </div>
+
+        <!-- 	
+          Código HTML para el primer contenedor: ícono (1/4) y tarjeta de generales (3/4)
+        -->
+	      <div class="w3-container w3-padding">
+				  <div class="w3-row-padding">
+            <!-- Espacio del ícono del Reporte -->
+            <div class="w3-quarter w3-container w3-center">
+              <i class="fas fa-file-alt qb-colorText w3-padding-16" style="font-size:120px"></i><br>
+              <button id="numReporte" class="w3-xxlarge"> <%= @report.id %></button>
+            </div>
+            <!-- Espacio de las tres barras de generales -->
+            <div class="w3-threequarter w3-container  w3-light-gray 
+                    w3-padding w3-medium w3-round">
+              <table class="w3-center w3-red  w3-border" style="width:100%;padding:5px">
+                <tr> 
+                  <th>OPERADOR</th> 
+                  <th>FECHA INICIO</th> 
+                </tr>
+                <tr> 
+                  <td ><%= @report.user.nombre %>
+                  <%= @report.user.p_apellido %></td> 
+                  <td ><%= @report.fecha_inicio.to_formatted_s(:db) %></td> 
+                </tr>
+              </table><br>
+              <div  class="w3-responsive">
+                <table class="w3-center w3-blue w3-border" style="width:100%;padding:5px">
+                  <tr> 
+                    <th>CLIENTE</th> 
+                    <th>PLANTA</th> 
+                    <th>PARTE</th> 
+                    <th>NOMBRE</th> 
+                  </tr>
+                  <tr> 
+                    <td>	<%= @report.quotation.cliente.nombre %> </td> 
+                    <td>	<%= @report.quotation.request.part.plant.nombre %> </td> 
+                    <td>	<%= @report.quotation.request.part.num_parte %> </td>
+                    <td>	<%= @report.quotation.request.part.nombre %> </td>  
+                  </tr>
+                </table>
+              </div><br>
+              <div class="w3-responsive">
+                <table class="w3-center w3-red w3-border" style="width:100%;padding:5px">
+                  <tr>
+                    <th >ITEMS</th>
+                    <th >INSPECS</th>
+                    <th >OK</th>
+                    <th >NG</th>
+                    <th >RECUP</th>
+                    <th >SCRAP</th>
+                    <th >INCIDE</th>
+                  </tr>
+                  <tr>
+                    <td  id="idItem"><%= @report.inspections.length %> </td>
+                    <td ><%= @report.total_inspeccion %></td>
+                    <td ><%= @report.total_ok %></td>
+                    <td ><%= @report.total_ng %></td>
+                    <td ><%= @report.total_recupera %></td>
+                    <td ><%= @report.total_basura %></td>
+                    <td ><%= @report.total_incidentes %></td>
+                  </tr>
+                </table>
+              </div> <!-- fin de responsive -->
+            </div>
+          </div>
+  			</div>
+        
+        <!--
+          	Código HTML para el segundo contenedor: tabla de lotes de inspección 
+        -->
+	      <div  id="tablaInspec"  style="overflow:scroll; height:330px;">
+			    <table class="w3-table-all w3-small w3-hoverable">
+            <tr class="w3-small">
+              <th class="w3-center barrafija">ITEM</th>
+              <th class="w3-center barrafija">LOTE</th>
+              <th class="w3-center barrafija">LOTE PROD1</th>
+              <th class="w3-center barrafija">LOTE PROD2</th>
+              <th class="w3-center barrafija">INSPECS</th>
+              <th class="w3-center barrafija">OK</th>
+              <th class="w3-center barrafija">NG</th>
+              <th class="w3-center barrafija">RECUP</th>
+              <th class="w3-center barrafija">SCRAP</th>
+              <th class="w3-center barrafija">INCIDE</th>
+            </tr>
+            <% @report.inspections.each do |inspection| %>
+              <tr>
+                <td title="Modifica datos de este ITEM"> <%= link_to inspection.num_item, edit_inspection_path(inspection), class: "w3-btn w3-light-blue w3-round"  %> </td>
+                
+                <td class="w3-center"><%= inspection.lote %></td>
+                <td class="w3-center"><%= inspection.lote_prod1 %></td>
+                <td class="w3-center"><%= inspection.lote_prod2 %></td>
+                <td class="w3-center"><%= inspection.inspecciones %></td>
+                <td class="w3-center"><%= inspection.ok %></td>
+                <td class="w3-center"><%= inspection.ng %></td>
+                <td class="w3-center"><%= inspection.recuperadas %></td>
+                <td class="w3-center"><%= inspection.scrap %></td>
+                <td title="Desgloce de incidentes" class="w3-center"> <input type="button" class="w3-btn w3-yellow w3-round" 
+                onclick="listaIncidentes(this)" value="<%= inspection.incidentes %>"></td>
+              </tr>
+            <% end %>
+			    </table>
+			  </div>
+
+      </div>
+    </div>  
+
+  </div>
+</div>
+
+<!-- Ventana MODAL para desplegar los incidentes después del click en la tabla de Reporte Diario -->
+<div id="incAmp" class="w3-modal">
+	
+  <div class="w3-modal-content w3-card-4" style="width:30%;" >
+    <header class="w3-container w3-red w3-center"> 
+      <span onclick="document.getElementById('incAmp').style.display='none'" class="w3-button w3-display-topright w3-large">&times;</span>
+      <h4>INCIDENTES <%= @param1 %></h4>
+    </header>
+    <div id=incPhp class="w3-container">
+      
+    </div>
+    <footer class="w3-container w3-red">
+      <p></p>
+    </footer>
+  </div>
+  
+</div>
+
+<!-- Solamente para desplegar pruebas-->
+<p id="prueba"></p>
+
+
+<script>
+
+function listaIncidentes(r){
+  
+  var item = r.parentNode.parentNode.rowIndex;				
+  var numReporte = document.getElementById("numReporte").innerHTML;
+  document.getElementById("prueba").innerHTML = numReporte;
+
+  var xmlhttp = new XMLHttpRequest();		
+  xmlhttp.onreadystatechange = function(){
+      if (this.readyState == 4 && this.status == 200) {
+        document.getElementById("incPhp").innerHTML = this.responseText;
+        document.getElementById("barraNavega").style.display="none";
+        document.getElementById("footer").style.display="none";
+        document.getElementById("incAmp").style.display="block";
+      }
+  };
+  
+  xmlhttp.open("GET","/incidentes?item="+item+"&numRepo="+numReporte,true);
+  xmlhttp.send(); 
+  
+}
+
+// 	asignaIncidentes(): al click toma los datos de "text" y "value" de la incidencia seleccionada y los asigna al color 
+var inciUsado = ["","","","","","","",""];
+function asignaIncidentes(color, entrada){
+  
+  var tipoIncidente = ["amarillo", "amber", "orange", "lime", "aqua", "blue", "cyan","teal"];
+  // Actualiza el areglo de incidentes utilizados
+  var i;
+  for( i=0; i < 8; i++){
+    if(  document.getElementById(tipoIncidente[i]).value != "" )
+      inciUsado[i] = document.getElementById(tipoIncidente[i]).value;
+  }
+	// Lee el incidente seleccionado en el menu
+	var index = document.getElementById('tipoObserva').selectedIndex;
+	var inciSelec = document.getElementById('tipoObserva').options[index].text;
+	
+  // Busca que no se haya asignado
+	
+	for(i = 0; i < inciUsado.length; i++) {
+		if ( inciSelec == inciUsado[i] ) 
+			return;
+	}
+ 
+	// Busca si existe otro incidente en el cajón seleccionado. Si la cuenta es cero, lo reemplaza, de otra manera aborta.
+  for(i = 0; i < 8; i++) {
+		if ( document.getElementById(color).value != ""){
+      if (document.getElementById(entrada).value == 0){
+        inciUsado[i] = inciSelec;
+        document.getElementById(color).value = inciSelec;
+        return;
+      }
+      else
+        return;
+    }
+    if( inciUsado[i] == "" ){
+      inciUsado[i] = inciSelec;
+      document.getElementById(color).value= inciSelec;
+      document.getElementById(entrada).value= 0;
+      return;
+    }
+	}
+	
+}
+
+//	incOk(): Incrementa OK después del doble click (que no genera onchange). El incremento tiene el 
+//				multiplicador de los radio botones
+function incOk(){	
+
+	// Recupera el valor del botón y lo asigna como multiplicador
+	var x = document.getElementsByName("multi");
+  	var i, j;
+	for (i = 0; i < x.length; i++) {
+		if ( x[i].checked ) { 
+		  j = x[i].value;
+		}
+	}
+	
+	if( document.getElementById('ok').value == "" )
+		document.getElementById('ok').value = "0";
+		
+	var ok = parseInt(document.getElementById('ok').value) + parseInt(j);
+	document.getElementById('ok').value = ok;
+	
+}
+//	incNg(): Incrementa ng después del doble click (que no genera onchange)
+function incNg(){	
+
+	// Recupera el valor del botón y lo asigna como multiplicador
+	var x = document.getElementsByName("multi");
+  	var i, j;
+	for (i = 0; i < x.length; i++) {
+		if ( x[i].checked ) { 
+		  j = x[i].value;
+		}
+	}
+	
+	if( document.getElementById('ng').value == "" )
+		document.getElementById('ng').value = "0";
+		
+	var ng = parseInt(document.getElementById('ng').value) + parseInt(j);
+	document.getElementById('ng').value = ng;
+	calcScrap();
+}
+//	incRecup(): Incrementa recup después del doble click (que no genera onchange)
+function incRecup(){
+	
+	// Recupera el valor del botón y lo asigna como multiplicador
+	var x = document.getElementsByName("multi");
+  	var i, j;
+	for (i = 0; i < x.length; i++) {
+		if ( x[i].checked ) { 
+		  j = x[i].value;
+		}
+	}
+	
+	if( document.getElementById('recup').value == "" )
+		document.getElementById('recup').value = "0";
+		
+	var recup = parseInt(document.getElementById('recup').value) + parseInt(j);
+	document.getElementById('recup').value = recup;
+	calcScrap();
+}
+//	modoTermina(): La tecla de Dar de Alta sigue a la caja Termina Reporte
+function modoTermina(){
+	var estado = document.getElementById('terminaRep').value;
+	if( estado === "0"){
+		document.getElementById('darAlta').innerHTML = "Termina";
+		document.getElementById('terminaRep').value ="1";
+	}
+	else{
+		document.getElementById('darAlta').innerHTML = "Registra";
+		document.getElementById('terminaRep').value ="0";
+	}
+}
+// calcScrap(): Modifica automáticamete los valores de srap y vigila el límite de recup
+function calcScrap(){
+	var ng = parseInt(document.getElementById('ng').value);
+	var recup = parseInt(document.getElementById('recup').value);
+	
+	if (recup > ng)
+		recup = ng;
+	
+	var scrap = ng - recup;
+	document.getElementById('recup').value = recup;
+	document.getElementById('scrap').value = scrap;
+}
+
+function despliegaPrueba(){
+
+    var p = document.getElementById("prueba2").value;  
+    document.getElementById("prueba2").value =  150; 
+}
+
+ function cambiaTermina(){
+    var p = document.getElementById("cajita_termina").checked;
+    if( p ){
+      document.getElementById("daralta").style.display = "none";
+      document.getElementById("termina").style.display = "block";
+    }
+    else{
+      document.getElementById("daralta").style.display = "block";
+      document.getElementById("termina").style.display = "none";
+    }
+  }
+
+despliegaPrueba();  // Para que refresque la primera vez
+
+</script>

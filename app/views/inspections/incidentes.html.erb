@@ -1,0 +1,18 @@
+
+	      <div class="w3-container w3-padding">
+			    <table class="w3-table-all  w3-hoverable">
+            <tr>
+              <th class="w3-center">TIPO</th>
+              <th class="w3-center ">CANTIDAD</th>
+            </tr>
+            <% @report.inspections[@item].incidents.each do |incident| %>
+              <tr>
+                <td class="w3-center"><%= incident.incident_type.tipo %></td>
+                <td class="w3-center"><%= incident.cantidad%></td>                
+              </tr>
+            <% end %>
+			    </table>
+        </div>
+        
+        
+		

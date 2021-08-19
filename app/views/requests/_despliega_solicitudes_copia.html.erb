@@ -1,0 +1,369 @@
+<!--
+  _despliega_solicitudes.html.erb
+
+    Es el código para desplegar las tarjetas de FORMULARIO y TABAL DE SOLICITUDES (request). 
+    Es común denominador para todos las acciones (ACTIONS) del controlador requests.
+    "new" y "edit" requieren de formulario pero la tabla no tiene ligas. En la tarea edit 
+    también se despliega liga para borrar el regisro.
+    "index" y "show" no necesitan el formulario. show no requiere de la entrada de búsqueda.
+
+    Recibe como argumento:
+      formulario: 
+        true - Despliega el formulario. SOLICITUDES puede esconder el formulario.
+        false - No despliega formulario y SOLICITUDES es igual al inicio.
+      alta: 
+        true - El formulario presenta tecla (submit) para una alta nueva.
+        false - El formulario presenta tecla (submit) para una modificación de registro existente.
+                Tambiénb presenta liga para borrar el registro.
+      todos:
+        true - Despliega la tabla de SOLICITUDES completa.
+        false - Despliega solo el registro indicado.
+
+-->
+
+
+<!-- Contenedor para las tarjetas de FORMULARIO y tabla general de SOLICITUDES -->
+<div id="request" class="w3-container w3-padding-64 w3-light-grey" >
+	<div class="w3-row-padding" >
+
+    <% if formulario %> <!-- Solo si requiere formulario: Alta y Modifica -->
+
+      <!-- 
+           Tarjeta del FORMULARIO 
+      -->
+      <div id="formulario" class="w3-container w3-third w3-padding-16" >
+        <div class="w3-card-4"> 
+          <div class="w3-container w3-cell-row w3-red">
+            <div class="w3-cell w3-cell-middle">
+              <h4>Formulario x para Solicitud:</h4>	
+            </div>	
+            <div class="w3-cell w3-cell-middle">
+              <h4><%= @request.id %></h4>	
+            </div>
+          </div>
+
+          <%= form_with model: @request do |form| %>
+            
+            <!--  Grupo del CLIENTE y PIEZA -->
+            <div class="w3-cell-row"> 
+              <div class="w3-container w3-padding w3-cell">
+                <%= form.label :cliente_id, "Cliente" %><br>
+                <%= form.collection_select :cliente_id,  Cliente.order(:nombre), :id, :nombre, {}, class: "w3-select" %>
+                <% @request.errors.full_messages_for(:cliente_id).each do |message| %>
+                  <div><%= message %></div>
+                <% end %>
+              </div>
+              <div class="w3-container w3-padding w3-cell" style="width:50%">
+                <%= form.label :part_id, "Pieza No." %><br>
+                <%= form.collection_select :part_id,  Part.order(:num_parte), :id, :num_parte, {}, class: "w3-select" %>
+                <% @request.errors.full_messages_for(:part_id).each do |message| %>
+                  <div><%= message %></div>
+                <% end %>
+              </div>
+            </div>
+            <!--  Grupo de la SERIE y LOTE-->
+            <div class="w3-cell-row"> 
+              <div class="w3-container w3-padding w3-cell">
+                <%= form.label :serie %><br>
+                <%= form.text_field :serie, class: "w3-input", placeholder: "obligatorio" %>
+                <% @request.errors.full_messages_for(:serie).each do |message| %>
+                  <div><%= message %></div>
+                <% end %>
+              </div>
+              <div class="w3-container w3-padding w3-cell" style="width:50%">
+                <%= form.label :lote %><br>
+                <%= form.text_field :lote, class: "w3-input", placeholder: "obligatorio" %>
+                <% @request.errors.full_messages_for(:lote).each do |message| %>
+                  <div><%= message %></div>
+                <% end %>
+              </div>
+            </div>
+            <!--  Campo del INVENTARIO -->
+            <div class="w3-container w3-padding">
+              <%= form.label :inventario %><br>
+              <%= form.text_field :inventario, class: "w3-input", placeholder: "obligatorio", style: "width:50%" %>
+              <% @request.errors.full_messages_for(:inventario).each do |message| %>
+                <div><%= message %></div>
+              <% end %>
+            </div>
+            <!--  Grupo del DEFECTO y AYUDA-->
+            <div class="w3-cell-row"> 
+              <div class="w3-container w3-padding w3-cell">
+                <%= form.label :incident_type_id, "Defecto" %><br>
+                <%= form.collection_select :incident_type_id, IncidentType.order(:tipo), :id, :tipo, {}, class: "w3-select" %>
+                <% @request.errors.full_messages_for(:incident_type_id).each do |message| %>
+                  <div><%= message %></div>
+                <% end %>
+              </div>
+              <div class="w3-container w3-padding w3-cell">
+                <%= form.label :ayuda__visual, "Ayuda Visual" %><br>
+                <%= form.text_field :ayuda_visual, class: "w3-input" %>
+                <% @request.errors.full_messages_for(:ayuda_visual).each do |message| %>
+                  <div><%= message %></div>
+                <% end %>
+              </div>
+            </div>
+            <!-- Campo del MÉTODO -->
+            <div class="w3-container w3-padding" style="width:50%">
+              <%= form.label :metodo, "Método" %><br>
+              <%= form.text_field :metodo, class: "w3-input" %>
+              <% @request.errors.full_messages_for(:metodo).each do |message| %>
+                <div><%= message %></div>
+              <% end %>
+            </div>
+             <!-- Campo del CONSUMO -->
+            <div class="w3-container w3-padding" style="width:50%">
+              <%= form.label :consumo, "Consumo" %><br>
+              <%= form.text_field :consumo, class: "w3-input" %>
+              <% @request.errors.full_messages_for(:consumo).each do |message| %>
+                <div><%= message %></div>
+              <% end %>
+            </div>
+            <br>
+
+            <!-- Esta sección resuelve el tipo de tecla "SUBMIT" según sea alta o modifica -->
+            <div class="w3-container w3-padding-16 w3-center">
+            
+              <% if alta %>
+
+                <%= form.submit name="Dar de Alta", class: "w3-button w3-large w3-gray w3-hover-red" %>
+              
+              <% else %>
+
+                <div class="w3-cell-row w3-large">
+                  <div class=" w3-cell w3-cell-middle w3-center">
+                    <%= form.submit name="Modificar", 
+                        data: { confirm: "Deseas MODIFICAR la solicitud: "+@request.id.to_s+" ?" },
+                        class: "w3-button  w3-gray w3-hover-red" %>
+                  </div>
+                  <div class=" w3-cell w3-cell w3-cell-middle w3-medium w3-center">
+                    <%= link_to "Borrar", request_path(@request), method: :delete,
+                        data: { confirm: "Deseas BORRAR la solicitud: "+@request.id.to_s+" ?" },
+                        class: "w3-button w3-gray w3-hover-red" %>
+                  </div>
+                </div>
+                
+              <% end %>
+
+            </div>
+            
+          <% end %> <!-- fin de la forma -->
+
+        </div> <!-- Termina la tarjeta del formulario -->
+      </div> <!-- Termina el contenedor de tarjeta de Formulario -->
+
+    <% end %>  <!-- fin del if de formulario -->
+
+		<!-- 
+         Tarjeta de la tabla general de SOLICITUDES 
+    -->
+		<div class="w3-container w3-rest w3-padding-16">
+			<div class="w3-card-4">
+        
+        <!-- 
+             Encabezado de la tabla general 
+        -->
+        <div class="w3-cell-row w3-padding w3-red w3-xlarge">
+          <!-- En modo formulario no se despliega la entrada de búsqueda -->
+  				<% if formulario || todos == false %>
+            <!-- Ícono << : expande la tabla hacia la izquierda o derecha -->
+            <div class="w3-container w3-cell w3-cell-middle w3-large">
+              <a id="flecha"  title="Expande ó contrae la tabla" class="w3-button w3-hide-small w3-text-black w3-hover-text-light-grey" 
+                  onclick="flecha('#formulario',this.id)">&#10094;&#10094;</a>
+            </div>
+            <!-- Título:  -->
+            <div class="w3-container  w3-cell w3-cell-middle w3-center">
+              <a><strong>SOLICITUDES</strong></a>  	
+            </div>
+            <!-- Ícono de retorno al inicio -->
+            <div class="w3-container w3-cell w3-cell-middle w3-center w3-large">
+              <a href="/requests" type="submit"  title="Regresa a SOLICITUDES" class=" w3-button w3-text-black w3-hover-text-light-grey"><i class="fa fa-reply-all"></i></a>
+            </div>
+
+          <% else  %> <!-- Despliega el encabezado completo -->
+            
+            <!-- Ícono de Alta: genera una nueva SOLICITUD  -->
+            <div class="w3-container w3-cell w3-cell-middle">
+              <a id="nuevo" href="/requests/new"  class="w3-button w3-text-black w3-hover-text-light-grey " >
+                  <i class="fas fa-phone"></i> +</a>
+            </div>
+            <!-- Checkbox: para seleccionar y generar una cotización -->
+            <div class="w3-container w3-cell w3-cell-middle w3-text-black">
+              <label for="cajita"><i class="fas fa-file-invoice-dollar"></i></label>
+              <input class="w3-check" title="Habilita la columna Cliente para generar cotizaciones" type="checkbox" id="cajita"          value="checked" oninput="cambiaLink()">
+            </div> 
+            <!-- Título: Según el tipo de pantalla-->
+            <div class="w3-container w3-hide-small w3-cell w3-cell-middle w3-center" style="width:50%">
+              <a><strong>SOLICITUDES</strong></a>  	
+            </div>
+            <div class="w3-container w3-hide-large w3-hide-medium w3-cell w3-cell-middle w3-center" style="width:50%">
+              <a><strong>SOLICI</strong></a>  	
+            </div>
+            <!-- Búsqueda: entrada para capturar un texto de búsqueda -->
+            <div class="w3-container w3-cell w3-cell-middle w3-center" >
+              <form >
+                <input  type="text" name="busca" size="5" class="w3-cell w3-cell-middle   w3-medium" placeholder="<%= @secCaracteres %>">							
+                <button href="/requests" type="submit"  class=" w3-cell w3-cell-middle w3-button w3-medium"><i class="fa fa-search"></i></a>
+              </form>
+            </div>
+          
+          <% end %>
+				
+        </div>
+
+				<!-- Tabla SOLICITUDES: despliega todos los registros o los que coinciden con la búsqueda -->
+				<div id="tabla_request" class="w3-center" style="overflow:scroll; height:450px;">
+					
+          <% if todos %> <!-- Despliegue de todos los registros -->
+
+            <!-- Las div "tabla_solicitudes_1" y "tabla_solicitudes_2" son el mecanismo para cambiar el link según se seleccione en el checkbox de cotizar en el encabezado. Se activan y desactivan mediante la función cambiaLink() de javascript -->
+            <div id="tabla_solicitudes_1">
+              
+              <!-- 
+                   Despliegue de la tabla con link a: Modificar 
+              -->
+              <table class="w3-table-all w3-medium w3-hoverable">
+                <tr>
+                  <th class="barrafija">No.</th>
+                  <th class="barrafija">Cliente</th>
+                  <th class="barrafija">Pieza</th>
+                  <th class="barrafija">Serie</th>
+                  <th class="barrafija">Lote</th>
+                  <th class="barrafija">Inventario</th>
+                  <th class="barrafija">Defecto</th>
+                  <th class="barrafija">Ayuda Visual</th>
+                  <th class="barrafija">Método</th>
+                  <th class="barrafija">Consumo</th>
+                </tr>
+                <% @requests.each do |request| %>
+                  <tr>
+                    <% if formulario %> <!-- En modo formulario los elementos de la tabla no tienen liga -->
+                      <td>	<%= request.id %> </td>
+                    <% else %>
+                      <!-- td>	<a href="/requests/<%= request.id%>/edit"> <%= request.id %> </td -->
+                      <td title="Modifica datos de esta solicitud"> <%= link_to request.id, edit_request_path(request) %> </td>
+                    <% end %>
+                      <!--td>	 request.cliente.nombre </td-->
+                      <td>	<%= request.cliente_id %> </td>
+                      <!--td>	 request.part.nombre </td--> 
+                      <td>	<%= request.part_id %> </td> 
+                      <td>	<%= request.serie %> </td>
+                      <td>	<%= request.lote %> </td>
+                      <td>	<%= request.inventario %> </td>
+                      <!--td>	request.incident_type.tipo  </td-->
+                      <td>	<%= request.incident_type_id %> </td>
+                      <td> 	<%= request.ayuda_visual %> </td>
+                      <td> 	<%= request.metodo %> </td>
+                      <td> 	<%= request.consumo %> </td>
+                  </tr>
+                <% end %>
+              </table>
+            </div>
+            <!-- 
+                 Despliegue de la tabla con link a: Cotizar 
+            -->
+            <div id="tabla_solicitudes_2" style="display:none">
+              <table class="w3-table-all w3-medium w3-hoverable">
+                <tr>
+                  <th class="barrafija">No.</th>
+                  <th class="barrafija">Cliente <br> <i class="fas fa-file-invoice-dollar"></i></th>
+                  <th class="barrafija">Pieza</th>
+                  <th class="barrafija">Serie</th>
+                  <th class="barrafija">Lote</th>
+                  <th class="barrafija">Inventario</th>
+                  <th class="barrafija">Defecto</th>
+                  <th class="barrafija">Ayuda Visual</th>
+                  <th class="barrafija">Método</th>
+                  <th class="barrafija">Consumo</th>
+                </tr>
+                <% @requests.each do |request| %>
+                  <tr>
+                    <td>	<%= request.id %> </td>
+                    <!-- En modo formulario los elementos de la tabla no tienen liga -->
+                    <% if formulario %> 
+                      <td>	<%= request.cliente.nombre %> </td>
+                    <% else %>
+                      <td title="Genera una cotización para esta solicitud">	<a href="/quotations/crear_desde_solicitudes/
+                          <%= request.id %>"> <%= request.cliente.nombre %> </td>
+                      <!--td> <%= link_to request.cliente.nombre, edit_request_path(request) %> </td -->
+                      
+                    <% end %>
+                    
+                    <td>	<%= request.part.nombre %> </td> 
+                    <td>	<%= request.serie %> </td>
+                    <td>	<%= request.lote %> </td>
+                    <td>	<%= request.inventario %> </td>
+                    <td>	<%= request.incident_type.tipo %> </td>
+                    <td> 	<%= request.ayuda_visual %> </td>
+                    <td> 	<%= request.metodo %> </td>
+                    <td> 	<%= request.consumo %> </td>
+                  </tr>
+                <% end %>
+              </table>
+            </div>
+
+          <% else %> 
+          <!-- La tabla despliega solo un registro, ya sea por show,  alta o modificación -->
+            
+            <table class="w3-table-all w3-medium w3-hoverable">
+              <tr>
+                <th class="barrafija">No.</th>
+                <th class="barrafija">Cliente</th>
+                <th class="barrafija">Pieza</th>
+                <th class="barrafija">Serie</th>
+                <th class="barrafija">Lote</th>
+                <th class="barrafija">Inventario</th>
+                <th class="barrafija">Defecto</th>
+                <th class="barrafija">Ayuda Visual</th>
+                <th class="barrafija">Método</th>
+                <th class="barrafija">Consumo</th>
+              </tr>
+              <tr>
+                <% if formulario %>
+                  <td>	<%= @request.id %> </td>
+                <% else %>
+                  <td>	<a href="/requests/<%= @request.id %>/edit"> <%= @request.id %> </td>
+                <% end %>
+                <td>	<%= @request.cliente.nombre %> </td>
+                <td>	<%= @request.part.nombre %> </td>
+                <td>	<%= @request.serie %> </td>
+                <td>	<%= @request.lote %> </td>
+                <td>	<%= @request.inventario %> </td>
+                <td>	<%= @request.incident_type.tipo %> </td>
+                <td> 	<%= @request.ayuda_visual %> </td>
+                <td> 	<%= @request.metodo %> </td>
+                <td> 	<%= @request.consumo %> </td>
+              </tr>
+            </table>
+
+					<% end %>
+					
+				</div>
+			</div>
+		</div> <!-- Termina tarjeta de la tabla general de SOLICITUDES -->
+	</div>
+</div>	<!-- Fin del contenedor: SOLICITUDES -->
+
+  
+<script>
+  
+  /*    cambiaLink()
+    Esta función de llama cuando hay un cambio en el checkbox del encabezado. Visibiliza el LINK que corresponde a la selección del checkbox:
+      checked = false ; El link apunta al formulario para Modificar registro
+      checked = true ; El link genera una cotización
+  */
+ 
+  function cambiaLink(){
+
+    var p = document.getElementById("cajita").checked;  
+    if( p ){
+      document.getElementById("tabla_solicitudes_1").style.display = "none";
+      document.getElementById("tabla_solicitudes_2").style.display = "block";
+    }
+    else{
+      document.getElementById("tabla_solicitudes_1").style.display = "block";
+      document.getElementById("tabla_solicitudes_2").style.display = "none";
+    }
+   
+  }
+</script>

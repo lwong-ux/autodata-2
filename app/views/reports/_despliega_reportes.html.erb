@@ -1,0 +1,477 @@
+<!--
+  _despliega_reportes.html.erb
+
+    Es el código para desplegar las tarjetas de FORMULARIO y TABLA DE REPORTES (reports). 
+    Es común denominador para todos las acciones (ACTIONS) del controlador reports.
+    "new" y "edit" requieren de formulario pero la tabla no tiene ligas. En la tarea edit 
+    también se despliega liga para borrar el regisro.
+    "index" y "show" no necesitan el formulario. show no requiere de la entrada de búsqueda.
+
+    Recibe como argumento:
+      formulario: 
+        true - Despliega el formulario. REPORTES puede esconder el formulario.
+        false - No despliega formulario y REPORTES es igual al inicio.
+      alta: 
+        true - El formulario presenta tecla (submit) para una alta nueva.
+        false - El formulario presenta tecla (submit) para una modificación de registro existente.
+                Tambiénb presenta liga para borrar el registro.
+      todos:
+        true - Despliega la tabla de REPORTES completa.
+        false - Despliega solo el registro indicado.
+
+-->
+
+
+<!-- Contenedor para las tarjetas de Formulario y Tabla Reportes -->
+<div id="report" class="w3-container w3-padding-64 w3-light-grey" >
+	<div class="w3-row-padding" >
+
+    <% if formulario %> <!-- Solo si requiere formulario: Alta y Modifica -->
+
+      <!-- 
+           Tarjeta del FORMULARIO 
+      -->
+      <div id="formulario" class="w3-container w3-third w3-padding-16" >
+        <div class="w3-card-4" > 
+          <div class="w3-container w3-cell-row w3-red">
+            <div class="w3-cell w3-cell-middle">
+              <h4>Formulario para Reporte:</h4>	
+            </div>
+            <div class="w3-cell w3-cell-middle">
+              <h4><%= @report.id %></h4>	
+            </div>
+          </div>
+          
+          <%= form_with model: @report do |form| %>
+            
+            <!--  Grupo de CLIENTE y No. COTIZACIÓN -->
+            <div class="w3-cell-row w3-card"> 
+              <div class="w3-container w3-padding w3-cell w3-center">
+                <h4>Cliente:</h4>
+                <h4><%= @report.quotation.cliente.nombre %> </h4>
+              </div>
+              <div class="w3-container w3-padding w3-cell w3-center">
+                <h4>PO:</h4>
+                <h4><%= @report.quotation.orden_compra%> </h4>
+              </div>
+            </div>
+             <br>
+             <!--  Grupo de USUARIO y TURNO -->
+            <div class="w3-cell-row"> 
+              <div class="w3-container w3-padding w3-cell ">
+                <%= form.label :user_id, "Operador" %><br>
+                <%= form.collection_select :user_id, User.order(:nombre), :id, :nombre, {}, class:"w3-select" %>
+                <% @report.errors.full_messages_for(:user_id).each do |message| %>
+                  <div><%= message %></div>
+                <% end %>
+              </div>
+              <div class="w3-container w3-padding w3-cell " style="width:50%">
+                <%= form.label :turno %><br>
+                <%= form.text_field :turno, class: "w3-input" %>
+                <% @report.errors.full_messages_for(:turno).each do |message| %>
+                  <div><%= message %></div>
+                <% end %>
+              </div>
+            </div>
+            <!--  Campo de FECHA DE INICIO -->
+            <div class="w3-container w3-padding">
+              <%= form.label :fecha_inicio, "Fecha de Inicio" %><br>
+              <%= form.datetime_field :fecha_inicio, class: "w3-input" %>
+              <% @report.errors.full_messages_for(:fecha_inicio).each do |message| %>
+                <div><%= message %></div>
+              <% end %>
+            </div>
+            
+      
+            <!-- Esta sección resuelve el tipo de tecla "SUBMIT" según sea alta o modifica -->
+            <div class="w3-container w3-padding-16 w3-center">
+            
+              <% if alta %>
+
+                <%= form.submit name="Dar de Alta", class: "w3-button w3-large w3-gray w3-hover-blue" %>
+              
+              <% else %>
+
+                <div class="w3-cell-row w3-large">
+                  <div class=" w3-cell w3-cell-middle w3-center">
+                    <%= form.submit name="Modificar", 
+                        data: { confirm: "Deseas MODIFICAR el reporte: "+@report.id.to_s+" ?" },
+                        class: "w3-button  w3-gray w3-hover-blue" %>
+                  </div>
+                  <div class=" w3-cell w3-cell w3-cell-middle w3-medium w3-center">
+                    <%= link_to "Borrar", report_path(@report), method: :delete,
+                        data: { confirm: "Deseas BORRAR el reporte: "+@report.id.to_s+" ?" },
+                        class: "w3-button w3-gray w3-hover-red" %>
+                  </div>
+                </div>
+                
+              <% end %>
+
+            </div>
+            
+            
+          <% end %> <!-- fin de la forma -->
+
+        </div> <!-- Termina la tarjeta del formulario -->
+      </div> <!-- Termina el contenedor de tarjeta de Formulario -->
+
+    <% end %>  <!-- fin del if de formulario -->
+
+		<!-- 
+         Tarjeta de la tabla general de REPORTES 
+    -->
+		<div class="w3-container w3-rest w3-padding-16">
+			<div class="w3-card-4">
+				
+				<!-- 
+            Encabezado de la tabla general 
+        -->
+        <div class="w3-cell-row w3-padding w3-blue w3-xlarge">
+
+          <!-- En modo formulario no se despliega la entrada de búsqueda -->
+  				<% if formulario || todos == false %>
+             <!-- Ícono << : expande la tabla hacia la izquierda o derecha -->
+            <div class="w3-container w3-cell w3-cell-middle w3-large">
+              <a id="flecha"  title="Expande ó contrae la tabla" class="w3-button w3-hide-small w3-text-black w3-hover-text-light-grey" 
+                  onclick="flecha('#formulario',this.id)">&#10094;&#10094;</a>
+            </div>
+            <!-- Título -->
+            <div class="w3-container w3-cell w3-cell-middle w3-center">
+              <a><strong>REPORTES</strong></a>  	
+            </div>
+            <!-- Ícono de retorno al inicio -->
+            <div class="w3-container w3-cell w3-cell-middle w3-center w3-large">
+              <a href="/reports" type="submit"  title="Regresa a REPORTES" class=" w3-button w3-text-black w3-hover-text-light-grey"><i class="fa fa-reply-all"></i></a>
+            </div>
+
+          <% else  %> <!-- Despliega el encabezado completo -->
+
+            <!-- Checkbox: para seleccionar y generar PDF o enviar correo -->
+            <div class="w3-container w3-cell w3-cell-middle w3-text-black">
+              <label class="w3-small">PDF</label><br>
+              <label for="cajita"><i class="fas fa-file-pdf"></i></label>
+              <input class="w3-check" title="Habilita la columna de PO para generar PDF" type="checkbox" id="cajita"  value="checked" oninput="cambiaLink()">
+            </div>
+            <div class="w3-container w3-cell w3-cell-middle w3-text-black">
+               <label class="w3-small">CORREO</label><br>
+              <label for="cajita2"><i class="fas fa-envelope"></i></label>
+              <input class="w3-check" type="checkbox" id="cajita2"          value="checked" oninput="cambiaLink()">
+            </div>
+            <!-- Título -->
+            <div class="w3-container w3-cell w3-cell-middle w3-center" style="width:50%">
+              <a><strong>REPORTES</strong></a>  	
+            </div>
+            <!-- Búsqueda: entrada para capturar un texto de búsqueda -->
+            <div class="w3-container w3-cell w3-cell-middle w3-center" >
+              <form >
+                <input  type="text" name="busca" size="5" class="w3-cell w3-cell-middle w3-medium" placeholder="<%= @secCaracteres %>">							
+                
+                <button href="/reports" type="submit"  class=" w3-cell w3-cell-middle w3-button w3-medium"><i class="fa fa-search"></i></a>
+              </form>
+            </div>
+          
+          <% end %>
+				
+        </div>
+
+				<!-- Tabla REPORTES: despliega todos los registros o los que coinciden 
+              con la búsqueda 
+        -->
+				<div id="tabla_report_1" class="w3-center" style="overflow:scroll; height:600px;">
+					
+          <% if todos %> <!-- La tabla despliega todos los registros -->
+            
+            <!-- Las div "tabla_reportes_1" y "tabla_reportes_2" son el mecanismo para cambiar el link según se seleccione en el checkbox de generar PDF en el encabezado. Se activan y desactivan mediante la función cambiaLink() de javascript -->
+            <div id="tabla_reportes_1">
+              
+              <!-- 
+                   Despliegue de la tabla con link a: Formulario 
+              -->
+              <table class="w3-table-all w3-medium w3-hoverable">
+                <tr>
+                  <th class="barrafija">No.</th>
+                  <th class="barrafija">Status</th>
+                  <th class="barrafija">Cliente</th>
+                  <th class="barrafija">PO</th>
+                  <th class="barrafija">Cotización</th>
+                  <th class="barrafija">Operador</th>
+                  <th class="barrafija">Turno</th>
+                  <th class="barrafija">Inicio</th>
+                  <th class="barrafija">Terminación</th>
+                  <th class="barrafija">Total Inspec</th>
+                  <th class="barrafija">Total OK</th>
+                  <th class="barrafija">Total NG</th>
+                  <th class="barrafija">Total Recupera</th>
+                  <th class="barrafija">Total SCRAP</th>
+                  <th class="barrafija">Total Incidentes</th>
+                </tr>
+                <% @reports.each do |report| %>
+                  <tr>
+
+                    <% if formulario %> <!-- En modo formulario los elementos de la tabla no tienen liga -->
+                      <td>	<%= report.id %> </td>
+                    <% else %>
+                      <!-- td>	<a href="/reports/<%= report.id%>/edit"> <%= report.id %> </td -->
+                      <td title="Modifica datos de este reporte"> <%= link_to report.id, edit_report_path(report), class: "w3-btn w3-light-blue w3-round" %> </td>
+                    <% end %>
+                      <% if report.status == "INSPEC" %>
+                        <td><label class="w3-btn w3-blue w3-round  w3-padding">	<%= report.status %> </label></td>
+                      <% elsif report.status == "TERMINADO" %>
+                        <td><label class="w3-btn w3-green w3-round  w3-padding">	<%= report.status %> </td>
+                      <% elsif report.status == "ENVIADO" %>
+                        <td><label class="w3-btn w3-black w3-round  w3-padding">	<%= report.status %> </td>
+                      <% else %>
+                        <td><label class="w3-btn w3-red w3-round w3-padding"><%= report.status %> </td>
+                      <% end %>
+                      
+                      <td>	<%= report.quotation.cliente.nombre %> </td> 
+                      <td>	<%= report.quotation.orden_compra %> </td> 
+                      <td>	<%= report.quotation.id %> </td> 
+                      <td>	<%= report.user.nombre %> </td>
+                      <td>	<%= report.turno %> </td> 
+                      <!-- Fechas trasladadas al español por el API I18n y su alias "l"
+                      ver: config/locales/es.yml y config/application.rb -->
+                      
+                      <td>	<%= report.fecha_inicio %> </td>
+                      <td>	<%= report.fecha_termino %> </td>
+                      <td>	<%= report.total_inspeccion %> </td>
+                      <td>	<%= report.total_ok %> </td>
+                      <td> 	<%= report.total_ng %> </td>
+                      <td> 	<%= report.total_recupera %> </td>
+                      <td> 	<%= report.total_basura %> </td>
+                      <td> 	<%= report.total_incidentes %> </td>
+                    </tr>
+                <% end %>
+              </table>
+            </div>
+            <!-- 
+                 Despliegue de la tabla con link a: PDF 
+            -->
+            <div id="tabla_reportes_2" style="display:none">
+              <table class="w3-table-all w3-medium w3-hoverable">
+                <tr>
+                  <th class="barrafija">No.</th>
+                  <th class="barrafija">Status</th>
+                  <th class="barrafija w3-center w3-large">Cliente <br> <i class="fas fa-file-pdf"></i></th>
+                  <th class="barrafija">PO</th>
+                  <th class="barrafija">Cotización</th>
+                  <th class="barrafija">Operador</th>
+                  <th class="barrafija">Turno</th>
+                  <th class="barrafija">Inicio</th>
+                  <th class="barrafija">Terminación</th>
+                  <th class="barrafija">Total Inspec</th>
+                  <th class="barrafija">Total OK</th>
+                  <th class="barrafija">Total NG</th>
+                  <th class="barrafija">Total Recupera</th>
+                  <th class="barrafija">Total SCRAP</th>
+                  <th class="barrafija">Total Incidentes</th>
+                </tr>
+                <% @reports.each do |report| %>
+                  <tr>
+                    <td>	<%= report.id %> </td>
+                    <% if report.status == "INSPEC" %>
+                    <td><label class="w3-btn w3-blue w3-round  w3-padding">	<%= report.status %> </label></td>
+                    <% elsif report.status == "TERMINADO" %>
+                      <td><label class="w3-btn w3-green w3-round  w3-padding">	<%= report.status %> </td>
+                    <% elsif report.status == "ENVIADO" %>
+                      <td><label class="w3-btn w3-black w3-round  w3-padding">	<%= report.status %> </td>
+                    <% else %>
+                      <td><label class="w3-btn w3-red w3-round w3-padding"><%= report.status %> </td>
+                    <% end %>
+                    
+                    <!-- En modo formulario los elementos de la tabla no tienen liga -->
+                    <% if formulario %> 
+                      <td>	<%= report.quotation.cliente.nombre %> </td>
+                    <% else %>
+                      <!-- td>	<a href="/reports/<%= report.id%>/edit"> <%= report.id %> </td -->
+                      <td title="Genera un archivo PDF para este reporte"> <%= link_to report.quotation.cliente.nombre, envia_reporte_path(report, format: :html), class: "w3-btn w3-light-blue w3-round" %> </td>
+                    <% end %>
+                      <td>	<%= report.quotation.orden_compra %> </td>
+                      <td>	<%= report.quotation.id %> </td>
+                      <td>	<%= report.user.nombre %> </td>
+                      <td>	<%= report.turno %> </td> 
+                      <!-- Fechas trasladadas al español por el API I18n y su alias "l"
+                        ver: config/locales/es.yml y config/application.rb 
+                          l(report.fecha_inicio, format: :lwong)
+                          l(report.fecha_termino,format: :lwong)   -->
+                      <td>	<%= report.fecha_inicio %> </td>
+                      <td>	<%= report.fecha_termino %> </td>
+                      <td>	<%= report.total_inspeccion %> </td>
+                      <td>	<%= report.total_ok %> </td>
+                      <td> 	<%= report.total_ng %> </td>
+                      <td> 	<%= report.total_recupera %> </td>
+                      <td> 	<%= report.total_basura %> </td>
+                      <td> 	<%= report.total_incidentes %> </td>
+                  </tr>
+                <% end %>
+              </table>
+            </div>
+            <!-- 
+                 Despliegue de la tabla con link a: Correo 
+            -->
+            <div id="tabla_reportes_3" style="display:none">
+              <table class="w3-table-all w3-medium w3-hoverable">
+                <tr>
+                  <th class="barrafija">No.</th>
+                  <th class="barrafija">Status</th>
+                  <th class="barrafija w3-center w3-large">Cliente <br> <i class="fas fa-file-pdf"></i></th>
+                  <th class="barrafija">PO</th>
+                  <th class="barrafija">Cotización</th>
+                  <th class="barrafija">Operador</th>
+                  <th class="barrafija">Turno</th>
+                  <th class="barrafija">Inicio</th>
+                  <th class="barrafija">Terminación</th>
+                  <th class="barrafija">Total Inspec</th>
+                  <th class="barrafija">Total OK</th>
+                  <th class="barrafija">Total NG</th>
+                  <th class="barrafija">Total Recupera</th>
+                  <th class="barrafija">Total SCRAP</th>
+                  <th class="barrafija">Total Incidentes</th>
+                </tr>
+                <% @reports.each do |report| %>
+                  <tr>
+                    <td>	<%= report.id %> </td>
+                    <% if report.status == "INSPEC" %>
+                        <td><label class="w3-btn w3-blue w3-round  w3-padding">	<%= report.status %> </label></td>
+                      <% elsif report.status == "TERMINADO" %>
+                        <td><label class="w3-btn w3-green w3-round  w3-padding">	<%= report.status %> </td>
+                      <% elsif report.status == "ENVIADO" %>
+                        <td><label class="w3-btn w3-black w3-round  w3-padding">	<%= report.status %> </td>
+                      <% else %>
+                        <td><label class="w3-btn w3-red w3-round w3-padding"><%= report.status %> </td>
+                      <% end %>
+                    
+                    <!-- En modo formulario los elementos de la tabla no tienen liga -->
+                    <% if formulario %> 
+                      <td>	<%= report.quotation.cliente.nombre %> </td>
+                    <% else %>
+                      <!-- td>	<a href="/reports/<%= report.id%>/edit"> <%= report.id %> </td -->
+                      <td title="Genera un archivo PDF para este reporte"> <%= link_to report.quotation.cliente.nombre, envia_correo_reporte_path(report), data: { confirm: "Deseas enviar un correo a: "+report.quotation.cliente.nombre.to_s+" ?"},class: "w3-btn w3-light-blue w3-round" %> </td>
+                    <% end %>
+                      <td>	<%= report.quotation.orden_compra %> </td>
+                      <td>	<%= report.quotation.id %> </td>
+                      <td>	<%= report.user.nombre %> </td>
+                      <td>	<%= report.turno %> </td> 
+                      <!-- Fechas trasladadas al español por el API I18n y su alias "l"
+                        ver: config/locales/es.yml y config/application.rb 
+                          l(report.fecha_inicio, format: :lwong)
+                          l(report.fecha_termino,format: :lwong)   -->
+                      <td>	<%= report.fecha_inicio %> </td>
+                      <td>	<%= report.fecha_termino %> </td>
+                      <td>	<%= report.total_inspeccion %> </td>
+                      <td>	<%= report.total_ok %> </td>
+                      <td> 	<%= report.total_ng %> </td>
+                      <td> 	<%= report.total_recupera %> </td>
+                      <td> 	<%= report.total_basura %> </td>
+                      <td> 	<%= report.total_incidentes %> </td>
+                  </tr>
+                <% end %>
+              </table>
+            </div>
+
+          <% else %> <!-- La tabla despliega solo un registro, ya sea por show,  alta o modificación -->
+            
+            <table class="w3-table-all w3-medium w3-hoverable">
+              <tr>
+                <th class="barrafija">No.</th>
+                <th class="barrafija">Status</th>
+                <th class="barrafija">Cliente</th>
+                <th class="barrafija">PO</th>
+                <th class="barrafija">Cotización</th>
+                <th class="barrafija">Operador</th>
+                <th class="barrafija">Turno</th>
+                <th class="barrafija">Inicio</th>
+                <th class="barrafija">Terminación</th>
+                <th class="barrafija">Total Inspec</th>
+                <th class="barrafija">Total OK</th>
+                <th class="barrafija">Total NG</th>
+                <th class="barrafija">Total Recupera</th>
+                <th class="barrafija">Total SCRAP</th>
+                <th class="barrafija">Total Incidentes</th>
+              </tr>
+              <tr>
+                <% if formulario %>
+                  <td>	<%= @report.id %> </td> 
+                <% else %>
+                  <td>	<a href="/reports/<%= @report.id %>/edit"> <%= @report.id %> </td>
+                <% end %>
+                  <% if @report.status == "INSPEC" %>
+                  <td><label class="w3-btn w3-blue w3-round  w3-padding">	<%= @report.status %> </label></td>
+                  <% elsif @report.status == "TERMINADO" %>
+                    <td><label class="w3-btn w3-green w3-round  w3-padding">	<%= report.status %> </td>
+                  <% elsif @report.status == "ENVIADO" %>
+                    <td><label class="w3-btn w3-black w3-round  w3-padding">	<%= @report.status %> </td>
+                  <% else %>
+                    <td><label class="w3-btn w3-red w3-round w3-padding"><%= @report.status %> </td>
+                  <% end %>
+                  <td>	<%= @report.quotation.cliente.nombre %> </td> 
+                  <td>	<%= @report.quotation.orden_compra %> </td> 
+                  <td>	<%= @report.quotation.id %> </td>
+                  <td>	<%= @report.user.nombre %> </td>
+                  <td>	<%= @report.turno %> </td> 
+                  <!-- Fechas trasladadas al español por el API I18n y su alias "l"
+                  ver: config/locales/es.yml y config/application.rb -->
+                  <td>	<%= @report.fecha_inicio %> </td>
+                  <td>	<%= @report.fecha_termino %> </td>
+                  <td>	<%= @report.total_inspeccion %> </td>
+                  <td>	<%= @report.total_ok %> </td>
+                  <td> 	<%= @report.total_ng %> </td>
+                  <td> 	<%= @report.total_recupera %> </td>
+                  <td> 	<%= @report.total_basura %> </td>
+                  <td> 	<%= @report.total_incidentes %> </td>
+              </tr>
+            </table>
+
+					<% end %>
+					
+				</div>
+        
+        <!-- Espacio para la paginación -->
+        <% if todos %>
+          <div class="w3-container w3-medium w3-center apple_pagination">
+            <%= will_paginate %>
+          </div>
+        <% end %>
+
+			</div>
+		</div> <!-- Termina tarjeta de la tabla de Cotizaciones -->
+	</div>
+</div>	<!-- Fin del contenedor: Cotizaciones -->
+
+<div class="w3-container w3-padding-16">
+  <%= line_chart Report.group_by_week(:fecha_inicio).count, xtitle: "Reportes en la semana", ytitle: "No. de reportes" %>
+</div>
+
+<script>
+  
+  /*    cambiaLink()
+    Esta función de llama cuando hay un cambio en el checkbox del encabezado. Visibiliza el LINK que corresponde a la selección del checkbox:
+      checked = false ; El link apunta al formulario para Modificar registro
+      checked = true ; El link genera una Reporte
+  */
+ 
+  function cambiaLink(){
+
+    var cajita = document.getElementById("cajita").checked;  
+    var cajita2 = document.getElementById("cajita2").checked; 
+    if( cajita && !cajita2){
+      document.getElementById("tabla_reportes_1").style.display = "none";
+      document.getElementById("tabla_reportes_2").style.display = "block";
+      document.getElementById("tabla_reportes_3").style.display = "none";
+    }
+    else if ( cajita2 && !cajita ){
+      document.getElementById("tabla_reportes_1").style.display = "none";
+      document.getElementById("tabla_reportes_2").style.display = "none";
+      document.getElementById("tabla_reportes_3").style.display = "block";
+    }
+    else{
+      document.getElementById("tabla_reportes_1").style.display = "block";
+      document.getElementById("tabla_reportes_2").style.display = "none";
+      document.getElementById("tabla_reportes_3").style.display = "none";
+
+      document.getElementById("cajita").checked = false;  
+      document.getElementById("cajita2").checked = false; 
+    }
+   
+  }
+</script>

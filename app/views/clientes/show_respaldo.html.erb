@@ -1,0 +1,48 @@
+
+<!-- Contenedor para la tarjeta Tabla Cientes -->
+<div id="cliente" class="w3-container w3-padding-64 w3-light-grey">
+	<div class="w3-row-padding" >
+
+		<!-- Tarjeta de la tabla de Clientes -->
+		<div class="w3-container w3-rest w3-padding-16">
+			<div class="w3-card-4">
+				
+				<div class="w3-bar w3-padding w3-teal w3-large w3-center">
+  				<a id="nuevo" href="/clientes/new" style="width:10%" class="w3-bar-item w3-button w3-left w3-text-black w3-hover-text-light-grey" >
+							<i class="fas fa-user-plus"></i></a>
+					<a style="width:80%" class="w3-bar-item"><strong>CLIENTES</strong></a>  	
+					<a href="/clientes" type="submit" style="width:10%" class="w3-bar-item w3-button">
+            <i class="fa fa-reply-all"></i></a>
+          
+				</div>
+
+				<!-- Espacio para generar la tabla Clientes -->
+				<div id="tabla_cliente" class="w3-center" style="overflow:scroll; height:450px;">
+					<table class="w3-table-all w3-medium w3-hoverable">
+						<tr>
+							<th class="barrafija">ID</th>
+							<th class="barrafija">Nombre</th>
+							<th class="barrafija">Contacto</th>
+							<th class="barrafija">Tel:</th>
+							<th class="barrafija">Dirección:</th>
+							<th class="barrafija">Entidad</th>
+						</tr>
+						
+						<tr>
+						<td>	<a href="/clientes/<%= @cliente.id%>/edit"> <%= @cliente.id %> </td>
+						<td>	<%= @cliente.nombre %> </td>
+						<td>	<%= @cliente.contacto %> </td>
+						<td>	<%= @cliente.tel %> </td>
+						<td>	<%= @cliente.direccion %> </td>
+						<td> 	<%= @cliente.entidad %> </td>
+						</tr>
+						
+					</table>
+				</div>
+
+			</div>
+		</div> <!-- Termina tarjeta de la tabla de Clientes -->
+
+	</div>
+</div>	<!-- Fin del contenedor: Clientes -->
+<P id="prueba"> </p>

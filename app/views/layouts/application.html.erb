@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AutDATA Ago21</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+   
+
+    <!-- Ligas para la utilización de las clases de w3.cc -->
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-colors-highway.css">
+
+
+    <!-- Ligas para la utilización de las tipografías de google -->
+    <!--link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat"-->
+
+    <!-- Ligas y script  para la utilización de los íconos libres y autorizados por Font Awesome con código: cd974c7c10 -->
+    <!--link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"-->
+    <script src="https://kit.fontawesome.com/cd974c7c10.js" crossorigin="anonymous">
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
+    </script>
+    
+    <!-- Biblioteca de JavaScript de W3.CSS -->
+    <script src="https://www.w3schools.com/lib/w3.js"></script>
+    
+    <!--Funciones JavaScript de Wong Instruments -->
+    <script>
+    /*
+      flecha()
+        Se utiliza para conmutar el despliegue entre dos y una tarjeta. 
+        Hacia la izquierda desaparece la tarjeta del formulario. Hacia la 
+        derecha regresan las dos tarjetas.
+    */
+    var dobleTarjeta = true;
+    function flecha(id_str,flecha_str){
+      if( dobleTarjeta == true ){
+        w3.hide(id_str);
+        document.getElementById(flecha_str).innerHTML = "&#10095;&#10095;";
+      }
+      else {
+        w3.show(id_str);
+        document.getElementById(flecha_str).innerHTML = "&#10094;&#10094;";
+      }
+      ++dobleTarjeta;
+      dobleTarjeta = dobleTarjeta & 0x01;
+    }
+    </script>
+
+
+
+    <style>
+
+      /*  Definición de la tipografica especial de QB (Concielian)  */
+      @font-face {
+        font-family: Concielian; 
+        src: url(concielian.ttf); /* Archivo con la tipografía */
+      }
+      body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+      .w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+      .w3-myfont {font-family: 'Concielian', sans-serif}
+
+      /* Definición del tamaño de los íconos según su clase */
+      .fa-user-graduate,.fa-handshake,  .fa-address-book, .fa-building {font-size:200px}
+      .fa-award {font-size:48px}
+      .fa-trash-alt {font-size:16px}
+
+      /* La declaración de clases para el manejo de los colores distintivos de los fondos y botones*/
+      .qb-colorPrim,.qb-hover:hover{color:#fff!important;background-color:#f44336!important}		/*  w3-red, w3-hover-red*/
+      .qb-colorBotonInact{color:#fff;background-color:#a6001a}									/* 	w3-highway-red */
+      .qb-colorText,.qb-hover-text:hover{color:#f44336!important}									/* 	w3-text-red, w3-hover-text-red:hover */
+      .qb-colorEstadisticas{color:#fff!important;background-color:#2196F3!important}				/*  w3-blue */
+
+      /* Definición CSS para fijar (estático) el encabezado de las tablas y color de fondo del mismo para que no sea transparente */
+      th{ 
+        padding: 5px; 
+        position: -webkit-sticky; 
+        position: sticky; 
+        top: 0; 
+      }
+      th.barrafija{
+	      background-color: lightgray;
+      }
+      
+      .apple_pagination {
+        background: #f1f1f1;
+        border: 1px solid #e5e5e5;
+        text-align: center;
+        padding: 1em;
+        cursor: default; }
+        .apple_pagination a, .apple_pagination span {
+          padding: 0.2em 0.3em; }
+        .apple_pagination .disabled {
+          color: #aaaaaa; }
+        .apple_pagination .current {
+          font-style: normal;
+          font-weight: bold;
+          background-color: #bebebe;
+          display: inline-block;
+          width: 1.4em;
+          height: 1.4em;
+          line-height: 1.5;
+          -moz-border-radius: 1em;
+          -webkit-border-radius: 1em;
+          border-radius: 1em;
+          text-shadow: rgba(255, 255, 255, 0.8) 1px 1px 1px; }
+        .apple_pagination a {
+          text-decoration: none;
+          color: black; }
+          .apple_pagination a:hover, .apple_pagination a:focus {
+            text-decoration: underline; 
+      }
+
+    </style>
+
+  
+<% if @capturando != true %>
+  <div  id="barraNavega" class="w3-top">
+    <!-- Barra de navegación: PRINCIPAL -->
+    <div  class="w3-bar qb-colorPrim  w3-card w3-large">
+      <div class="w3-bar-item " style="margin-left: 80px;>
+        <%= link_to image_tag("logo_blanco.png", alt: "QB logo", width: "40"), '#' %>
+      </div>
+      
+  		<div class="w3-bar-item w3-dropdown-hover w3-right" style="margin-right: 80px;">
+  			<button class="w3-button "><i class="fas fa-database"></i> AutoDATA</button> 
+    		<div class="w3-dropdown-content w3-bar-block w3-border">
+          <a href="/inspections" class="w3-bar-item w3-button"><i class="fas fa-user-cog w3-text-blue"> </i> Inspecciones</a>
+          <a href="/reports" class="w3-bar-item w3-button"><i class="fas fa-file-alt w3-text-blue"> </i> Reportes Diarios</a>
+          <a href="/incident_types" class="w3-bar-item w3-button"><i class="fas fa-exclamation-triangle w3-text-blue"> </i> Incidentes</a>
+          
+          <a href="/requests" class="w3-bar-item w3-button"><i class="fas fa-phone w3-text-red"> </i> Solicitudes</a>
+          <a href="/quotations" class="w3-bar-item w3-button"><i class="fas fa-file-invoice-dollar w3-text-red"> </i> Cotizaciones</a>
+			    <a href="/autodat" class="w3-bar-item w3-button"><i class="fas fa-chart-bar w3-text-red"> </i> Estadísticas</a>
+			    <a href="/autodat" class="w3-bar-item w3-button"><i class="fas fa-user-clock w3-text-red"> </i> Tiempo Real</a>
+    			
+          <a href="/users" class="w3-bar-item w3-button"><i class="fas fa-user w3-text-teal"> </i> Usuarios</a>
+          <a href="/clientes" class="w3-bar-item w3-button"><i class="fas fa-address-card w3-text-teal"> </i> Clientes</a>
+          <a href="/plants" class="w3-bar-item w3-button"><i class="fas fa-industry w3-text-teal"> </i> Plantas</a>
+          <a href="/parts" class="w3-bar-item w3-button"><i class="fas fa-cogs w3-text-teal"> </i> Piezas</a>
+          
+          
+    		</div>
+		  </div>
+
+	  </div>
+  </div> <!-- Termina barra de navagación -->
+<% end %>
+</head>
+
+  <body>
+  <%= yield %>
+  </body>
+
+  <!-- SECCIÓN 5: Pie de página -->
+  <footer id="footer" class="w3-container w3-padding w3-center w3-opacity w3-medium">  
+ 	  <p>Powered by Wong Instruments/w3.css</p>
+  </footer>
+
+</html>

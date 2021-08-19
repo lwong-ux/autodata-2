@@ -1,0 +1,28 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<meta charset="UTF-8">
+<head>
+<title>PDFs - Ruby on Rails</title>
+<!-- Ligas para la utilización de las clases de w3.cc -->
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
+</head>
+<body>
+<div  class="w3-container w3-bar w3-red  w3-card w3-large">
+  <div class="w3-bar-item ">
+    <h5> qualitybolca.com </h5>     
+  </div>
+  <div class="w3-bar-item w3-right">
+    <%= wicked_pdf_image_tag "logo_blanco.png", alt: "QB logo", width: "50" %>
+  </div>
+</div>
+    <%= yield %>
+</body>
+<footer>
+  <div   class="w3-container w3-card-4 w3-bar w3-red w3-center w3-small">
+  <div class="w3-bar-item">
+    <h5>Quality Bolca, Ave. Paso Blanco, Aguascalientes, Ags. Tel: 449 913 9955, info.ags@qualitybolca.com</h5>
+  </div>
+</div>
+</footer>
+</html>

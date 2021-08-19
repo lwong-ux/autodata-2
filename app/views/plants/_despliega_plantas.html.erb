@@ -1,0 +1,237 @@
+<!--
+  _despliega_plantas.html.erb
+
+    Es el código para desplegar las tarjetas de FORMULARIO y TABAL DE PLANTAS. 
+    Es común denominador para todos las acciones (ACTIONS) del controlador plants.
+    "new" y "edit" requieren de formulario pero la tabla no tiene ligas. En la tarea edit 
+    también se despliega liga para borrar el regisro.
+    "index" y "show" no necesitan el formulario. show no requiere de la entrada de búsqueda.
+
+    Recibe como argumento:
+      formulario: 
+        true - Despliega el formulario. PLANTAS puede esconder el formulario.
+        false - No despliega formulario y PLANTAS es igual al inicio.
+      alta: 
+        true - El formulario presenta tecla (submit) para una alta nueva.
+        false - El formulario presenta tecla (submit) para una modificación de registro existente.
+                Tambiénb presenta liga para borrar el registro.
+      todos:
+        true - Despliega la tabla de PLANTAS completa.
+        false - Despliega solo el registro indicado.
+
+-->
+
+<!-- Contenedor para las tarjetas de Formulario y Tabla Plants -->
+<div id="plant" class="w3-container w3-padding-64 w3-light-grey" >
+	<div class="w3-row-padding" >
+
+    <% if formulario %> <!-- Solo si requiere formulario -->
+
+      <!-- 
+           Tarjeta del Formulario 
+      -->
+      <div id="formulario" class="w3-container w3-third w3-padding-16" >
+        <div class="w3-card-4" > 
+          <div class="w3-container w3-teal w3-center" >
+            <h4>Formulario</h4>		
+          </div>
+
+          <%= form_with model: @plant do |form| %>
+            
+            <div class="w3-container w3-padding">
+              <%= form.label :nombre %><br>
+              <%= form.text_field :nombre, class: "w3-input", placeholder: "obligatorio" %>
+              <% @plant.errors.full_messages_for(:nombre).each do |message| %>
+                <div><%= message %></div>
+              <% end %>
+            </div>
+
+            <div class="w3-container w3-padding">
+              <%= form.label :contacto %><br>
+              <%= form.text_field :contacto, class: "w3-input", placeholder: "obligatorio" %>
+              <% @plant.errors.full_messages_for(:contacto).each do |message| %>
+                <div><%= message %></div>
+              <% end %>
+            </div>
+
+            <div class="w3-container w3-padding">
+              <%= form.label :tel %><br>
+              <%= form.text_field :tel, class: "w3-input", placeholder: "obligatorio", style: "width:50%"%>
+              <% @plant.errors.full_messages_for(:tel).each do |message| %>
+                <div><%= message %></div>
+              <% end %>
+            </div>
+
+            <div class="w3-container w3-padding">
+              <%= form.label :dirección %><br>
+              <%= form.text_field :direccion, class: "w3-input" %>
+              <% @plant.errors.full_messages_for(:direccion).each do |message| %>
+                <div><%= message %></div>
+              <% end %>
+            </div>
+
+            <div class="w3-container w3-padding">
+              <%= form.label :entidad %><br>
+              <div class="">
+                <%= form.select :entidad, ["Aguascalientes", "Baja California", "Baja California Sur", 
+                  "Campeche", "Chiapas", "Chihuahua", "Ciudad de México", "Coahuila", "Colima", 
+                  "Durango", "Edo. de México", "Guanajuato", "Guerrero",  "Hidalgo", "Jalisco", "Michoacán", 
+                  "Morelos", "Nayarit", "Nuevo León", "Oaxaca", "Puebla", "Querétaro", "Quintana Roo",
+                  "San Luis Potosí", "Sinaloa", "Sonora", "Tabasco", "Tamaulipas", "Tlaxcala", 
+                  "Veracruz", "Yucatán", "Zacatecas"], {}, class: "w3-select" %>
+              </div>
+              <% @plant.errors.full_messages_for(:entidad).each do |message| %>
+                <div><%= message %></div>
+              <% end %>
+            </div>
+            <br>
+
+            <!-- Esta sección resuelve el tipo de tecla según sea alta o modifica -->
+            <div class="w3-container w3-padding-16 w3-center">
+            
+              <% if alta %>
+
+                <%= form.submit name="Dar de Alta", class: "w3-button w3-large w3-gray w3-hover-teal" %>
+              
+              <% else %>
+
+                <div class="w3-cell-row w3-large">
+                  <div class=" w3-cell w3-cell-middle w3-center">
+                    <%= form.submit name="Modificar", 
+                    data: { confirm: "Deseas MODIFICAR la planta: "+@plant.nombre+" ?" },
+                      class: "w3-button  w3-gray w3-hover-teal"%>
+                  </div>
+                  <div class=" w3-cell w3-cell w3-cell-middle w3-medium w3-center">
+                    <%= link_to "Borrar", plant_path(@plant), method: :delete,
+                            data: { confirm: "Deseas BORRAR la planta: "+@plant.nombre+" ?" },
+                            class: "w3-button w3-gray w3-hover-red" %>
+                  </div>
+                </div>
+                
+              <% end %>
+
+            </div>
+            
+            
+          <% end %> <!-- fin de la forma -->
+
+        </div> <!-- Termina la tarjeta del formulario -->
+      </div> <!-- Termina el contenedor de tarjeta de Formulario -->
+
+    <% end %>  <!-- fin del if de formulario -->
+
+		<!-- 
+         Tarjeta de la tabla de Plants 
+    -->
+		<div class="w3-container w3-rest w3-padding-16">
+			<div class="w3-card-4">
+				
+				<!-- En modo formulario no se despliega la entrada de búsqueda -->
+        <div class="w3-cell-row w3-padding w3-teal w3-xlarge">
+
+  				<% if formulario || todos == false %>
+
+            <div class="w3-container w3-cell w3-cell-middle w3-large">
+              <a id="flecha" title="Expande ó contrae la tabla" class="w3-button w3-hide-small w3-text-black w3-hover-text-light-grey" 
+                  onclick="flecha('#formulario',this.id)">&#10094;&#10094;</a>
+            </div>
+            <div class="w3-container w3-cell w3-cell-middle w3-center">
+              <a><strong>PLANTAS</strong></a>  	
+            </div>
+            <div class="w3-container w3-cell w3-cell-middle w3-center w3-large">
+              <a href="/plants" type="submit" title="Regresa a PLANTAS" class=" w3-button w3-text-black w3-hover-text-light-grey"><i class="fa fa-reply-all"></i></a>
+            </div>
+
+          <% else  %>
+
+            <div class="w3-container w3-cell w3-cell-middle">
+              <a id="nuevo" href="/plants/new" title="Dar de alta" class="w3-button w3-text-black w3-hover-text-light-grey " >
+                  <i class="fas fa-industry"></i> +</a>
+            </div>
+            <div class="w3-container w3-cell w3-cell-middle w3-center">
+              <a><strong>PLANTAS</strong></a>  	
+            </div>
+            <div class="w3-container w3-cell w3-cell-middle w3-center" >
+              <form >
+                <input  type="text" name="busca" size="5" class="w3-cell w3-cell-middle w3-medium" placeholder="<%= @secCaracteres %>">							
+                
+                <button href="/plants" type="submit"  class=" w3-cell w3-cell-middle w3-button w3-medium"><i class="fa fa-search"></i></a>
+              </form>
+            </div>
+          
+          <% end %>
+				
+        </div>
+
+				<!-- Espacio para generar la tabla Plants -->
+				<div id="tabla_plant" class="w3-center" style="overflow:scroll; height:450px;">
+					
+          <% if todos %> <!-- La tabla despliega todos los registros -->
+            
+            <table class="w3-table-all w3-medium w3-hoverable">
+              <tr>
+                <th class="barrafija">ID</th>
+                <th class="barrafija">Nombre</th>
+                <th class="barrafija">Contacto</th>
+                <th class="barrafija">Tel:</th>
+                <th class="barrafija">Dirección:</th>
+                <th class="barrafija">Entidad</th>
+              </tr>
+              <% @plants.each do |plant| %>
+                <tr>
+
+                  <% if formulario %> <!-- En modo formulario los elementos de la tabla no tienen liga -->
+                    <td>	<%= plant.id %> </td>
+                  <% else %>
+                    <!-- td>	<a href="/plants/<%= plant.id%>/edit"> <%= plant.id %> </td -->
+                    <td title="Modifica datos de esta planta"> <%= link_to plant.id, edit_plant_path(plant), class: "w3-btn w3-light-blue w3-round" %> </td>
+                  <% end %>
+                  <td>	<%= plant.nombre %> </td>
+                  <td>	<%= plant.contacto %> </td>
+                  <td>	<%= plant.tel %> </td>
+                  <td>	<%= plant.direccion %> </td>
+                  <td> 	<%= plant.entidad %> </td>
+                </tr>
+              <% end %>
+            </table>
+            
+          <% else %> <!-- La tabla despliega solo un registro, ya sea por show,  alta o modificación -->
+            
+            <table class="w3-table-all w3-medium w3-hoverable">
+              <tr>
+                <th class="barrafija">ID</th>
+                <th class="barrafija">Nombre</th>
+                <th class="barrafija">Contacto</th>
+                <th class="barrafija">Tel:</th>
+                <th class="barrafija">Dirección:</th>
+                <th class="barrafija">Entidad</th>
+              </tr>
+              <tr>
+                <% if formulario %>
+                  <td>	<%= @plant.id %> </td>
+                <% else %>
+                  <td>	<a href="/plants/<%= @plant.id %>/edit"> <%= @plant.id %> </td>
+                <% end %>
+                <td>	<%= @plant.nombre %> </td>
+                <td>	<%= @plant.contacto %> </td>
+                <td>	<%= @plant.tel %> </td>
+                <td>	<%= @plant.direccion %> </td>
+                <td> 	<%= @plant.entidad %> </td>
+              </tr>
+            </table>
+
+					<% end %>
+					
+				</div>
+       <% if todos %>
+         <div class="w3-container w3-medium w3-center apple_pagination">
+            <%= will_paginate %>
+          </div>
+        <% end %>
+			</div>
+		</div> <!-- Termina tarjeta de la tabla de Plants -->
+	</div>
+</div>	<!-- Fin del contenedor: Plants -->
+<div class="w3-container w3-padding-64">
+  <%= column_chart Plant.group(:entidad).count, xtitle: "Entidad", ytitle: "No. de plantas" %>
+</div>
