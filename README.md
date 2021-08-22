@@ -25,6 +25,18 @@ Things you may want to cover:
 
   `$ rails db:seed`
 
+* Git
+
+  Solo una vez por computadora:
+  
+  `$ git config --global user.name "lwong-ux`
+  
+  `$ git config --global user.email "wong.instrumnets@gmail.com`
+  
+  Para recordar las claves por un día:
+  
+  `git config --global credential.helper "cache --timeout=86400"`
+
 * GitHub
 
   Para conectar al deposito remoto (origin):
@@ -35,7 +47,7 @@ Things you may want to cover:
   
   Usr: lwong-ux
   
-  psw: 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
+  psw:  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
 
 * Services (job queues, cache servers, search engines, etc.)
 
