@@ -73,6 +73,9 @@ Rails.application.configure do
 
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
+  
+  # Para permitir la conexió al servidor local AWS
+  config.hosts << "c2e41214144c41fea77e1d62bc112d38.vfs.cloud9.us-east-2.amazonaws.com"
 
   # Configuración para habilitar un server de correo que permita enviar los mismo, en este caso: wong.instruments@gmail.com
   config.action_mailer.delivery_method = :smtp
