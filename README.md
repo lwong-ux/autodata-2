@@ -25,10 +25,23 @@ Things you may want to cover:
 
   `$ rails db:seed`
 
-* How to run the test suite
+* GitHub
+
+  Para conectar al deposito remoto (origin):
+
+  `$ git remote add origin https://github.com/lwong-ux/autodata-2.git` 
+    
+  `$ git push -u origin main`
+  
+  Usr: lwong-ux
+  
+  psw: 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
 
 * Services (job queues, cache servers, search engines, etc.)
 
 * Deployment instructions
 
-* ...
+  Instalar **Heroku** (en caso de que no lo esté), del libro de RoR tutorial:
+  
+  `$ source <(curl -sL https://cdn.learnenough.com/heroku_install)`
+  
