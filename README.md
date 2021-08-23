@@ -89,4 +89,12 @@
   
   Para vincular esta aplicación con una particular de Heroku:
   
-  `$ heroku git:remote -a young-headland-09640`
+  `$ heroku git:remote -a powerful-coast-18663`
+  
+  Para eliminar un remoto a heroku
+  
+  `git remote rm heroku`
+  
+  Distribuir (deployment)
+  
+  `$ git push heroku main`
