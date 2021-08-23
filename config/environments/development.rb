@@ -78,12 +78,12 @@ Rails.application.configure do
   config.hosts << "a46bddad7cbd4db4996bb0dad0f2b19a.vfs.cloud9.us-east-2.amazonaws.com"
   
   # Configuración para habilitar un server de correo que permita enviar los mismo, en este caso: wong.instruments@gmail.com
-  #config.action_mailer.delivery_method = :smtp
-  #config.action_mailer.smtp_settings = {
-   # address:              'smtp.gmail.com',
-    #port:                 587,
-    #user_name:            'wong.instruments@gmail.com',
-    #password:             'CtaW7233',
-    #authentication:       'plain',
-    #enable_starttls_auto: true }
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address:              'smtp.gmail.com',
+    port:                 587,
+    user_name:            'wong.instruments@gmail.com',
+    password:             'CtaW7233',
+    authentication:       'plain',
+    enable_starttls_auto: true }
 end
