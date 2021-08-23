@@ -1,31 +1,22 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+* **Ruby**
 
-Things you may want to cover:
-
-* Ruby version
+  El sistema recomedó actualizar ruby. Se genero el siguiente comando:
+  
+  `rvm install "ruby-3.0.0"`
   
   ruby  3.0.0
 
-* System dependencies
-
-* Configuration
-
-  Antes de iniciar, configurar **bundle** para que recuerde no incluir producción en local:
-  
-  `$ bundle config set --local without production`
-
-* Database creation
+* **Database**
   
   `$ rails db:migrate`
 
-* Database initialization
+* **Database inicialización**
 
   `$ rails db:seed`
 
-* Git
+* **Git**
 
   Solo una vez por computadora:
   
@@ -36,8 +27,12 @@ Things you may want to cover:
   Para recordar las claves por un día:
   
   `git config --global credential.helper "cache --timeout=86400"`
+  
+  Se descargo la versión respaldada en GitHub:
+  
+  `git clone https://github.com/lwong-ux/autodata-2.git`
 
-* GitHub
+* **GitHub**
 
   Para conectar al deposito remoto (origin):
 
@@ -57,3 +52,19 @@ Things you may want to cover:
   
   `$ source <(curl -sL https://cdn.learnenough.com/heroku_install)`
   
+* **Webpacker**
+    
+  El mensaje de error: Webpacker::Manifest::MissingEntryError in Autodat#inicio,
+  se elimina con:
+
+  `rails webpacker:install`
+  
+* **Bundler**
+
+  Antes de iniciar, configurar **bundle** para que recuerde no incluir producción en local:
+  
+  `$ bundle config set --local without production`
+
+  Bundler recomendó actualizar de versión. Se realizó el siguiente comando:
+  
+  `gem install bundler:2.2.17`
