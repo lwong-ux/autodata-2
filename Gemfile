@@ -32,7 +32,7 @@ gem 'will_paginate', '~> 3.3'
 #gem 'faker', '~> 2.18'
 gem 'faker', :git => 'https://github.com/faker-ruby/faker.git', :branch => 'master'
 
-gem 'wkhtmltopdf-amd64', '~> 0.0.0'
+#gem 'wkhtmltopdf-amd64', '~> 0.0.0'
 gem 'wicked_pdf', '~> 2.1'
 
 # En la RaspberryPi los binarios se instalaron con:

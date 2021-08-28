@@ -220,7 +220,6 @@ GEM
     wicked_pdf (2.1.0)
       activesupport
     will_paginate (3.3.0)
-    wkhtmltopdf-amd64 (0.0.0)
     wkhtmltopdf-binary (0.12.6.5)
     xpath (3.2.0)
       nokogiri (~> 1.8)
@@ -255,7 +254,6 @@ DEPENDENCIES
   webpacker (~> 5.0)
   wicked_pdf (~> 2.1)
   will_paginate (~> 3.3)
-  wkhtmltopdf-amd64 (~> 0.0.0)
   wkhtmltopdf-binary
 
 RUBY VERSION
