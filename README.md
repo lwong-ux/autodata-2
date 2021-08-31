@@ -2,7 +2,7 @@
 
 * **Ruby**
 
-  El sistema recomedó actualizar ruby. Se genero el siguiente comando:
+  El sistema recomedó actualizar ruby. Se generó el siguiente comando:
   
   `$ rvm install "ruby-3.0.0"`
   
@@ -44,13 +44,6 @@
   
   psw:  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
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-  Instalar **Heroku** (en caso de que no lo esté), del libro de RoR tutorial:
-  
-  `$ source <(curl -sL https://cdn.learnenough.com/heroku_install)`
   
 * **Webpacker**
     
@@ -71,17 +64,33 @@
   
 * **wkhtmltopdf**
 
-  Para instalar en Ubuntu 18
+  Para instalar en Ubuntu 18 (AWS Cloud9)
   
-  `$ wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb`
+    `$ wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb`
   
-  `$ sudo dpkg -i wkhtmltox_0.12.5-1.bionic_amd64.deb`
+    `$ sudo dpkg -i wkhtmltox_0.12.5-1.bionic_amd64.deb`
+  
+  Para instalar en la RaspberryPi
+
+    `sudo apt-get install wkhtmltopdf`
+
+  Para producción (Heroku) funcina bien la gema "wkhtmltopdf-binary"
   
 * **Heroku**
 
-  Para instalar Heroku (del libro Ruby on Rails Tutorial...:
+  Para instalar Heroku 
+    
+    En Ubuntu (Recomendación del libro Ruby on Rails tutorials):
   
-  `$ source <(curl -sL https://cdn.learnenough.com/heroku_install)`
+      `$ source <(curl -sL https://cdn.learnenough.com/heroku_install)`
+
+    En RaspberryPi:  Se ejecuta primero solo el comando "curl", enviando la información a un nuevo archivo (instala_heroku). Se edita instala_heroku para cambiar el paquete fuente: reemplazar "x64" por "arm" en todos lados. Se jecuta el nuevo archivo con "source".
+
+      `$ curl -sL https://cdn.learnenough.com/heroku_install  > instala_heroku`
+
+      `$ sudo nano instala_heroku`
+
+      `$ source instala_heroku`
   
   Para ingresar a Heroku desde CLI
   
