@@ -82,15 +82,15 @@
     
     En Ubuntu (Recomendación del libro Ruby on Rails tutorials):
   
-      `$ source <(curl -sL https://cdn.learnenough.com/heroku_install)`
+      $ source <(curl -sL https://cdn.learnenough.com/heroku_install)
 
     En RaspberryPi:  Se ejecuta primero solo el comando "curl", enviando la información a un nuevo archivo (instala_heroku). Se edita instala_heroku para cambiar el paquete fuente: reemplazar "x64" por "arm" en todos lados. Se jecuta el nuevo archivo con "source".
 
-      `$ curl -sL https://cdn.learnenough.com/heroku_install  > instala_heroku`
+      $ curl -sL https://cdn.learnenough.com/heroku_install  > instala_heroku
 
-      `$ sudo nano instala_heroku`
+      $ sudo nano instala_heroku
 
-      `$ source instala_heroku`
+      $ source instala_heroku
   
   Para ingresar a Heroku desde CLI
   
@@ -106,5 +106,10 @@
   
   Distribuir (deployment)
   
-  
   `$ git push heroku main`
+
+  Finalmente se inicializa la base de datos con:
+
+  `$ heroku run rails db:migrate`
+
+  `$ heroku run rails db:seed`
