@@ -29,8 +29,9 @@ gem 'bootsnap', '>= 1.4.4', require: false
 
 gem 'will_paginate', '~> 3.3'
 #gem 'bootstrap-will_paginate', '~> 1.0'
-#gem 'faker', '~> 2.18'
-gem 'faker', :git => 'https://github.com/faker-ruby/faker.git', :branch => 'master'
+
+gem 'faker', '~> 2.12'
+
 
 #gem 'wkhtmltopdf-amd64', '~> 0.0.0'
 gem 'wicked_pdf', '~> 2.1'
